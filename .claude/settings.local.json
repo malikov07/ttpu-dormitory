@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Malikov\\\\Desktop\\\\ttpu-dor\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(python -m py_compile config.py states.py texts.py keyboards.py handlers/start.py handlers/application.py utils/preview.py utils/google_api.py data/regions.py)",
+      "Bash(python -c ' *)",
+      "Bash(python -m py_compile keyboards.py handlers/application.py texts.py)",
+      "Bash(python -m py_compile texts.py utils/preview.py handlers/application.py keyboards.py utils/google_api.py)",
+      "Bash(python -m py_compile data/regions.py texts.py keyboards.py states.py handlers/application.py handlers/start.py utils/preview.py utils/google_api.py)",
+      "Bash(python -m py_compile bot.py config.py states.py keyboards.py texts.py data/regions.py handlers/start.py handlers/menu.py handlers/admin.py handlers/application.py utils/preview.py utils/google_api.py)",
+      "Bash(python -m py_compile utils/google_api.py handlers/admin.py)",
+      "Bash(python -m py_compile utils/lang_store.py utils/google_api.py handlers/admin.py)",
+      "Bash(python -m py_compile bot.py config.py states.py keyboards.py texts.py data/regions.py handlers/start.py handlers/menu.py handlers/admin.py handlers/application.py utils/preview.py utils/google_api.py utils/tg.py utils/lang_store.py)",
+      "Bash(gh auth *)",
+      "Bash(grep -iE \"\\\\.env$|credentials\\\\.json|user_langs|app_counter\")",
+      "Bash(git rm *)",
+      "Bash(git add *)"
+    ]
+  }
+}

@@ -1,0 +1,540 @@
+"""All UI text strings in 3 languages: uz, en, ru."""
+
+TEXTS = {
+    "uz": {
+        "welcome": (
+            "🏛 <b>TTPU Yotoqxona Ariza Boti</b>\n\n"
+            "Assalomu alaykum! Iltimos, tilni tanlang:"
+        ),
+        "lang_set": "✅ Til o'rnatildi: O'zbekcha 🇺🇿",
+        "main_menu": "📋 <b>Asosiy menyu</b>\n\nQuyidagi tugmalardan birini tanlang:",
+        "btn_apply": "📝 Ariza berish",
+        "btn_change_lang": "🌐 Tilni o'zgartirish",
+        "btn_faq": "❓ Ko'p so'raladigan savollar",
+        "btn_cancel": "❌ Bekor qilish",
+        "btn_back": "⬅️ Ortga",
+        "btn_skip": "⏭ O'tkazib yuborish",
+        "cancelled": "❌ Ariza bekor qilindi. Asosiy menyuga qaytdingiz.",
+        "submit_error": "❌ Arizani yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
+        # Oferta
+        "oferta_message": (
+            "📜 <b>Oferta shartnomasi</b>\n\n"
+            "Davom etishdan oldin, iltimos oferta shartnomasini diqqat bilan o'qing.\n\n"
+            "Oferta shartlarini qabul qilasizmi?"
+        ),
+        "oferta_link": "Ofertani ko'rish",
+        "btn_oferta_agree": "✅ Qabul qilaman",
+        # Sex
+        "ask_sex": "👤 <b>Jinsingizni tanlang:</b>",
+        "btn_male": "👨 Erkak",
+        "btn_female": "👩 Ayol",
+        "sex_male": "Erkak",
+        "sex_female": "Ayol",
+        "preview_sex": "👤 <b>Jins:</b> {value}",
+        # Region
+        "region_foreign": "🌍 Xorijiy davlat",
+        # Application form prompts
+        "ask_full_name": "👤 <b>To'liq ismingizni kiriting</b> (F.I.O.):\n\n<i>Misol: Karimov Jasur Bahodirovich</i>",
+        "ask_level": "🎓 <b>Kursni tanlang:</b>",
+        "ask_faculty": "🏛 <b>Ta'lim yo'nalishini tanlang:</b>",
+        "ask_region": "📍 <b>Hududni tanlang:</b>",
+        "ask_town": "🏘 <b>Tuman/shaharni tanlang:</b>\n\n<i>Viloyat: {region}</i>",
+        "ask_town_custom": "✏️ <b>Tuman/shahar nomini kiriting:</b>",
+        "ask_reason": "📝 <b>Yotoqxonaga joylashish sababini tanlang:</b>",
+        "ask_reason_custom": "✏️ <b>Sababni yozing:</b>",
+        "ask_official_doc": (
+            "📄 <b>Rasmiy hujjatni yuboring:</b>\n\n"
+            "<i>Tegishli rasmiy hujjatni yuboring — rasm yoki fayl\n"
+            "(PDF, Word, taqdimot va h.k.)</i>"
+        ),
+        "ask_official_doc_invalid": "⚠️ Iltimos, rasm yoki hujjat fayli (PDF, Word, taqdimot) yuboring.",
+        "ask_passport": "📸 <b>Pasport rasmini yuboring:</b>\n\n<i>Pasportning asosiy sahifasi rasmini yuboring</i>",
+        "ask_photo_3x4": "🖼 <b>3x4 rasmingizni yuboring:</b>\n\n<i>Standart 3x4 formatdagi rasmingizni yuboring</i>",
+        "ask_phone": "📞 <b>Telefon raqamingizni yuboring:</b>\n\n<i>Tugmani bosing yoki +998XXXXXXXXX formatida kiriting</i>",
+        "ask_additional_phone": (
+            "📞 <b>Qo'shimcha telefon raqamni kiriting:</b>\n\n"
+            "<i>+998XXXXXXXXX formatida kiriting</i>"
+        ),
+        "btn_share_phone": "📱 Telefon raqamni yuborish",
+        # Validation
+        "invalid_name": "⚠️ Ism kamida 5 ta belgidan iborat bo'lishi kerak. Qaytadan kiriting:",
+        "send_photo_only": "⚠️ Iltimos, rasm yoki fayl yuboring.",
+        "invalid_phone": "⚠️ Telefon raqami noto'g'ri. +998XXXXXXXXX formatida kiriting yoki tugmani bosing.",
+        "same_phone_error": "⚠️ Qo'shimcha raqam asosiy telefon raqamidan farq qilishi kerak.",
+        # Preview
+        "preview_title": "📋 <b>Arizangizni tekshiring:</b>\n",
+        "preview_name": "👤 <b>F.I.O.:</b> {value}",
+        "preview_level": "🎓 <b>Kurs:</b> {value}-kurs",
+        "preview_faculty": "🏛 <b>Yo'nalish:</b> {value}",
+        "preview_region": "📍 <b>Viloyat:</b> {value}",
+        "preview_town": "🏘 <b>Tuman/Shahar:</b> {value}",
+        "preview_reason": "📝 <b>Sabab:</b> {value}",
+        "preview_official_doc": "📄 <b>Rasmiy hujjat:</b> ✅ Yuklangan",
+        "preview_phone": "📞 <b>Telefon:</b> {value}",
+        "preview_additional_phone": "📞 <b>Qo'shimcha telefon:</b> {value}",
+        "preview_photos": "📸 <b>Rasmlar:</b> ✅ Yuklangan",
+        "preview_footer": "\n<i>Ma'lumotlarni tekshiring va tasdiqlang</i>",
+        "btn_confirm": "✅ Tasdiqlash",
+        "btn_edit": "✏️ Tahrirlash",
+        # Edit
+        "edit_select": "✏️ <b>Qaysi maydonni o'zgartirmoqchisiz?</b>",
+        "edit_name": "👤 F.I.O.",
+        "edit_sex": "👤 Jins",
+        "edit_level": "🎓 Kurs",
+        "edit_faculty": "🏛 Yo'nalish",
+        "edit_region": "📍 Viloyat",
+        "edit_town": "🏘 Tuman/Shahar",
+        "edit_reason": "📝 Sabab",
+        "edit_official_doc": "📄 Rasmiy hujjat",
+        "edit_passport": "📸 Pasport rasmi",
+        "edit_photo": "🖼 3x4 rasm",
+        "edit_phone": "📞 Telefon",
+        "edit_additional_phone": "📞 Qo'shimcha tel.",
+        # Confirmation
+        "confirmed": (
+            "🎉🎊 <b>Arizangiz muvaffaqiyatli yuborildi!</b> 🎊🎉\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "📋 Ariza raqami: <b>#{id}</b>\n"
+            "✅ Hujjatlaringiz qabul qilindi.\n"
+            "🕓 Arizangiz ishchi guruh tomonidan 10-avgustga qadar ko‘rib chiqiladi.\n"
+            "🔔 Natija ushbu bot orqali e'lon qilinadi!\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🤝 E'tiboringiz uchun rahmat! Omad tilaymiz! 🍀"
+        ),
+        # Admin / results
+        "btn_publish_results": "📣 Natijalarni e'lon qilish",
+        "publish_prompt": (
+            "📣 <b>Natijalarni e'lon qilish</b>\n\n"
+            "Jadvaldagi barcha arizachilarga natija xabari yuboriladi:\n"
+            "• <b>M</b> ustunida <b>1</b> bo‘lsa — qabul qilindi ✅\n"
+            "• Aks holda — rad etildi ❌\n\n"
+            "Davom etasizmi?"
+        ),
+        "btn_publish_confirm": "✅ Ha, yuborilsin",
+        "btn_publish_cancel": "❌ Bekor qilish",
+        "publish_cancelled": "❌ Natijalarni e'lon qilish bekor qilindi.",
+        "publishing": "⏳ Natijalar yuborilmoqda, iltimos kuting...",
+        "publish_done": (
+            "✅ <b>Natijalar yuborildi!</b>\n\n"
+            "🎉 Qabul qilinganlar: <b>{success}</b>\n"
+            "❌ Rad etilganlar: <b>{failure}</b>\n"
+            "⚠️ Yuborilmadi: <b>{failed}</b>"
+        ),
+        "not_admin": "⛔️ Bu amal faqat administratorlar uchun.",
+        "result_success": (
+            "🎉🎊 <b>Tabriklaymiz!</b> 🎊🎉\n\n"
+            "✅ Siz TTPU yotoqxonasiga <b>qabul qilindingiz!</b>\n\n"
+            "📞 Keyingi qadamlar bo‘yicha siz bilan bog‘lanamiz.\n"
+            "🍀 Omad yor bo‘lsin!"
+        ),
+        "result_failure": (
+            "📩 <b>Natija</b>\n\n"
+            "Afsuski, bu safar siz yotoqxonaga <b>qabul qilinmadingiz.</b> Bo'sh joy mavjud bo'lishi bilan aloqaga chiqamiz.\n\n"
+            "🙏 Arizangiz uchun rahmat. Kelgusida omad tilaymiz!"
+        ),
+        # Channel (always sent in Uzbek)
+        "channel_caption": (
+            "📋 <b>YANGI ARIZA #{id}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>F.I.O.:</b> {name}\n"
+            "👤 <b>Jins:</b> {sex}\n"
+            "🎓 <b>Kurs:</b> {level}-kurs\n"
+            "🏛 <b>Yo'nalish:</b> {faculty}\n"
+            "📍 <b>Viloyat:</b> {region}\n"
+            "🏘 <b>Tuman:</b> {town}\n"
+            "📝 <b>Sabab:</b> {reason}\n"
+            "📞 <b>Telefon:</b> {phone}\n"
+            "📞 <b>Qo'shimcha:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        # Preview (same layout, user's language)
+        "preview_caption": (
+            "📋 <b>ARIZA KO'RINISHI</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>F.I.O.:</b> {name}\n"
+            "👤 <b>Jins:</b> {sex}\n"
+            "🎓 <b>Kurs:</b> {level}-kurs\n"
+            "🏛 <b>Yo'nalish:</b> {faculty}\n"
+            "📍 <b>Viloyat:</b> {region}\n"
+            "🏘 <b>Tuman:</b> {town}\n"
+            "📝 <b>Sabab:</b> {reason}\n"
+            "📞 <b>Telefon:</b> {phone}\n"
+            "📞 <b>Qo'shimcha:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        # FAQ
+        "faq_title": "❓ <b>Ko'p so'raladigan savollar</b>\n",
+        "faq_content": (
+            "<b>1. Ariza qanday beriladi?</b>\n"
+            "📝 Ariza berish tugmasini bosing va barcha ma'lumotlarni kiriting.\n\n"
+            "<b>2. Qanday hujjatlar kerak?</b>\n"
+            "📸 Pasportning asosiy sahifasi rasmi va 3x4 formatdagi rasm.\n\n"
+            "<b>3. Natijalar qachon e'lon qilinadi?</b>\n"
+            "📅 Natijalar arizalar to'planganidan so'ng e'lon qilinadi.\n\n"
+            "<b>4. Aloqa:</b>\n"
+            "📞 Qo'shimcha savollar uchun universitetga murojaat qiling."
+        ),
+        "other": "📌 Boshqa",
+        "level_year": "{n}-kurs",
+    },
+    "en": {
+        "welcome": (
+            "🏛 <b>TTPU Dormitory Application Bot</b>\n\n"
+            "Hello! Please select your language:"
+        ),
+        "lang_set": "✅ Language set: English 🇬🇧",
+        "main_menu": "📋 <b>Main Menu</b>\n\nSelect one of the options below:",
+        "btn_apply": "📝 Apply",
+        "btn_change_lang": "🌐 Change Language",
+        "btn_faq": "❓ FAQ",
+        "btn_cancel": "❌ Cancel",
+        "btn_back": "⬅️ Back",
+        "btn_skip": "⏭ Skip",
+        "cancelled": "❌ Application cancelled. You are back in the main menu.",
+        "submit_error": "❌ Something went wrong while submitting your application. Please try again.",
+        # Oferta
+        "oferta_message": (
+            "📜 <b>User Agreement</b>\n\n"
+            "Before continuing, please read our offer agreement carefully.\n\n"
+            "Do you accept the terms of the agreement?"
+        ),
+        "oferta_link": "View Agreement",
+        "btn_oferta_agree": "✅ I agree",
+        # Sex
+        "ask_sex": "👤 <b>Select your gender:</b>",
+        "btn_male": "👨 Male",
+        "btn_female": "👩 Female",
+        "sex_male": "Male",
+        "sex_female": "Female",
+        "preview_sex": "👤 <b>Gender:</b> {value}",
+        # Region
+        "region_foreign": "🌍 Foreign",
+        # Application form
+        "ask_full_name": "👤 <b>Enter your full name:</b>\n\n<i>Example: Karimov Jasur Bakhodirovich</i>",
+        "ask_level": "🎓 <b>Select your year:</b>",
+        "ask_faculty": "🏛 <b>Select your direction:</b>",
+        "ask_region": "📍 <b>Select your location:</b>",
+        "ask_town": "🏘 <b>Select your town/district:</b>\n\n<i>Region: {region}</i>",
+        "ask_town_custom": "✏️ <b>Type your town/district name:</b>",
+        "ask_reason": "📝 <b>Select the reason for accommodation in the dormitory:</b>",
+        "ask_reason_custom": "✏️ <b>Type your reason:</b>",
+        "ask_official_doc": (
+            "📄 <b>Send your official document:</b>\n\n"
+            "<i>Send the relevant official document — photo or file\n"
+            "(PDF, Word, presentation, etc.)</i>"
+        ),
+        "ask_official_doc_invalid": "⚠️ Please send a photo or document file (PDF, Word, presentation).",
+        "ask_passport": "📸 <b>Send your passport photo:</b>\n\n<i>Send a photo of the main page of your passport</i>",
+        "ask_photo_3x4": "🖼 <b>Send your 3x4 photo:</b>\n\n<i>Send a standard 3x4 format photo</i>",
+        "ask_phone": "📞 <b>Send your phone number:</b>\n\n<i>Press the button or type in +998XXXXXXXXX format</i>",
+        "ask_additional_phone": (
+            "📞 <b>Enter additional phone number:</b>\n\n"
+            "<i>Enter in +998XXXXXXXXX format</i>"
+        ),
+        "btn_share_phone": "📱 Share Phone Number",
+        "invalid_name": "⚠️ Name must be at least 5 characters. Please try again:",
+        "send_photo_only": "⚠️ Please send a photo or image file.",
+        "invalid_phone": "⚠️ Invalid phone number. Please use +998XXXXXXXXX format or press the button.",
+        "same_phone_error": "⚠️ Additional number must be different from the main phone number.",
+        "preview_title": "📋 <b>Review your application:</b>\n",
+        "preview_name": "👤 <b>Full Name:</b> {value}",
+        "preview_sex": "👤 <b>Gender:</b> {value}",
+        "preview_level": "🎓 <b>Year:</b> {value}",
+        "preview_faculty": "🏛 <b>Direction:</b> {value}",
+        "preview_region": "📍 <b>Region:</b> {value}",
+        "preview_town": "🏘 <b>Town/District:</b> {value}",
+        "preview_reason": "📝 <b>Reason:</b> {value}",
+        "preview_official_doc": "📄 <b>Official document:</b> ✅ Uploaded",
+        "preview_phone": "📞 <b>Phone:</b> {value}",
+        "preview_additional_phone": "📞 <b>Additional phone:</b> {value}",
+        "preview_photos": "📸 <b>Photos:</b> ✅ Uploaded",
+        "preview_footer": "\n<i>Please review and confirm your information</i>",
+        "btn_confirm": "✅ Confirm",
+        "btn_edit": "✏️ Edit",
+        "edit_select": "✏️ <b>Which field would you like to edit?</b>",
+        "edit_name": "👤 Full Name",
+        "edit_sex": "👤 Gender",
+        "edit_level": "🎓 Year",
+        "edit_faculty": "🏛 Direction",
+        "edit_region": "📍 Region",
+        "edit_town": "🏘 Town/District",
+        "edit_reason": "📝 Reason",
+        "edit_official_doc": "📄 Official doc",
+        "edit_passport": "📸 Passport Photo",
+        "edit_photo": "🖼 3x4 Photo",
+        "edit_phone": "📞 Phone",
+        "edit_additional_phone": "📞 Add. phone",
+        "confirmed": (
+            "🎉🎊 <b>Your application has been submitted successfully!</b> 🎊🎉\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "📋 Application number: <b>#{id}</b>\n"
+            "✅ Your documents have been received.\n"
+            "🕓 Your application will be reviewed by the working group by August 10.\n"
+            "🔔 The result will be announced through this bot!\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🤝 Thank you! Good luck! 🍀"
+        ),
+        # Admin / results
+        "btn_publish_results": "📣 Publish results",
+        "publish_prompt": (
+            "📣 <b>Publish results</b>\n\n"
+            "A result message will be sent to every applicant in the sheet:\n"
+            "• If column <b>M</b> is <b>1</b> — accepted ✅\n"
+            "• Otherwise — rejected ❌\n\n"
+            "Do you want to continue?"
+        ),
+        "btn_publish_confirm": "✅ Yes, send",
+        "btn_publish_cancel": "❌ Cancel",
+        "publish_cancelled": "❌ Publishing results was cancelled.",
+        "publishing": "⏳ Sending results, please wait...",
+        "publish_done": (
+            "✅ <b>Results sent!</b>\n\n"
+            "🎉 Accepted: <b>{success}</b>\n"
+            "❌ Rejected: <b>{failure}</b>\n"
+            "⚠️ Failed to deliver: <b>{failed}</b>"
+        ),
+        "not_admin": "⛔️ This action is for administrators only.",
+        "result_success": (
+            "🎉🎊 <b>Congratulations!</b> 🎊🎉\n\n"
+            "✅ You have been <b>accepted</b> to the TTPU dormitory!\n\n"
+            "📞 We will contact you about the next steps.\n"
+            "🍀 Best of luck!"
+        ),
+        "result_failure": (
+            "📩 <b>Result</b>\n\n"
+            "Unfortunately, you were <b>not accepted</b> to the dormitory this time.\n\n"
+            "🙏 Thank you for your application. We wish you luck in the future!"
+        ),
+        "channel_caption": (
+            "📋 <b>NEW APPLICATION #{id}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>Full Name:</b> {name}\n"
+            "👤 <b>Gender:</b> {sex}\n"
+            "🎓 <b>Year:</b> {level}\n"
+            "🏛 <b>Direction:</b> {faculty}\n"
+            "📍 <b>Region:</b> {region}\n"
+            "🏘 <b>Town:</b> {town}\n"
+            "📝 <b>Reason:</b> {reason}\n"
+            "📞 <b>Phone:</b> {phone}\n"
+            "📞 <b>Additional:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        "preview_caption": (
+            "📋 <b>APPLICATION PREVIEW</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>Full Name:</b> {name}\n"
+            "👤 <b>Gender:</b> {sex}\n"
+            "🎓 <b>Year:</b> {level}\n"
+            "🏛 <b>Direction:</b> {faculty}\n"
+            "📍 <b>Region:</b> {region}\n"
+            "🏘 <b>Town:</b> {town}\n"
+            "📝 <b>Reason:</b> {reason}\n"
+            "📞 <b>Phone:</b> {phone}\n"
+            "📞 <b>Additional:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        "faq_title": "❓ <b>Frequently Asked Questions</b>\n",
+        "faq_content": (
+            "<b>1. How do I apply?</b>\n"
+            "📝 Press the Apply button and fill in all the required information.\n\n"
+            "<b>2. What documents are needed?</b>\n"
+            "📸 A photo of the main page of your passport and a 3x4 format photo.\n\n"
+            "<b>3. When are results announced?</b>\n"
+            "📅 Results will be announced after all applications are collected.\n\n"
+            "<b>4. Contact:</b>\n"
+            "📞 For additional questions, please contact the university."
+        ),
+        "other": "📌 Other",
+        "level_year": "Year {n}",
+    },
+    "ru": {
+        "welcome": (
+            "🏛 <b>Бот заявки в общежитие ТТПУ</b>\n\n"
+            "Здравствуйте! Пожалуйста, выберите язык:"
+        ),
+        "lang_set": "✅ Язык установлен: Русский 🇷🇺",
+        "main_menu": "📋 <b>Главное меню</b>\n\nВыберите один из вариантов ниже:",
+        "btn_apply": "📝 Подать заявку",
+        "btn_change_lang": "🌐 Изменить язык",
+        "btn_faq": "❓ Часто задаваемые вопросы",
+        "btn_cancel": "❌ Отменить",
+        "btn_back": "⬅️ Назад",
+        "btn_skip": "⏭ Пропустить",
+        "cancelled": "❌ Заявка отменена. Вы вернулись в главное меню.",
+        "submit_error": "❌ Произошла ошибка при отправке заявки. Пожалуйста, попробуйте снова.",
+        # Oferta
+        "oferta_message": (
+            "📜 <b>Договор оферты</b>\n\n"
+            "Перед продолжением, пожалуйста, внимательно прочитайте договор оферты.\n\n"
+            "Вы принимаете условия договора?"
+        ),
+        "oferta_link": "Просмотреть оферту",
+        "btn_oferta_agree": "✅ Согласен",
+        # Sex
+        "ask_sex": "👤 <b>Выберите ваш пол:</b>",
+        "btn_male": "👨 Мужской",
+        "btn_female": "👩 Женский",
+        "sex_male": "Мужской",
+        "sex_female": "Женский",
+        "preview_sex": "👤 <b>Пол:</b> {value}",
+        # Region
+        "region_foreign": "🌍 Иностранец",
+        # Application form
+        "ask_full_name": "👤 <b>Введите ваше полное имя</b> (Ф.И.О.):\n\n<i>Пример: Каримов Жасур Баходирович</i>",
+        "ask_level": "🎓 <b>Выберите курс:</b>",
+        "ask_faculty": "🏛 <b>Выберите направление:</b>",
+        "ask_region": "📍 <b>Выберите расположение:</b>",
+        "ask_town": "🏘 <b>Выберите район/город:</b>\n\n<i>Область: {region}</i>",
+        "ask_town_custom": "✏️ <b>Введите название района/города:</b>",
+        "ask_reason": "📝 <b>Выберите причину проживания в общежитии.:</b>",
+        "ask_reason_custom": "✏️ <b>Напишите причину:</b>",
+        "ask_official_doc": (
+            "📄 <b>Отправьте официальный документ:</b>\n\n"
+            "<i>Отправьте соответствующий официальный документ — фото или файл\n"
+            "(PDF, Word, презентация и т.д.)</i>"
+        ),
+        "ask_official_doc_invalid": "⚠️ Пожалуйста, отправьте фото или файл документа (PDF, Word, презентация).",
+        "ask_passport": "📸 <b>Отправьте фото паспорта:</b>\n\n<i>Отправьте фото основной страницы паспорта</i>",
+        "ask_photo_3x4": "🖼 <b>Отправьте фото 3x4:</b>\n\n<i>Отправьте фото стандартного формата 3x4</i>",
+        "ask_phone": "📞 <b>Отправьте номер телефона:</b>\n\n<i>Нажмите кнопку или введите в формате +998XXXXXXXXX</i>",
+        "ask_additional_phone": (
+            "📞 <b>Введите дополнительный номер телефона:</b>\n\n"
+            "<i>Введите в формате +998XXXXXXXXX</i>"
+        ),
+        "btn_share_phone": "📱 Отправить номер телефона",
+        "invalid_name": "⚠️ Имя должно содержать минимум 5 символов. Попробуйте снова:",
+        "send_photo_only": "⚠️ Пожалуйста, отправьте фото или файл изображения.",
+        "invalid_phone": "⚠️ Неверный номер телефона. Используйте формат +998XXXXXXXXX или нажмите кнопку.",
+        "same_phone_error": "⚠️ Дополнительный номер должен отличаться от основного.",
+        "preview_title": "📋 <b>Проверьте вашу заявку:</b>\n",
+        "preview_name": "👤 <b>Ф.И.О.:</b> {value}",
+        "preview_sex": "👤 <b>Пол:</b> {value}",
+        "preview_level": "🎓 <b>Курс:</b> {value}-курс",
+        "preview_faculty": "🏛 <b>Направление:</b> {value}",
+        "preview_region": "📍 <b>Область:</b> {value}",
+        "preview_town": "🏘 <b>Район/Город:</b> {value}",
+        "preview_reason": "📝 <b>Причина:</b> {value}",
+        "preview_official_doc": "📄 <b>Официальный документ:</b> ✅ Загружен",
+        "preview_phone": "📞 <b>Телефон:</b> {value}",
+        "preview_additional_phone": "📞 <b>Доп. телефон:</b> {value}",
+        "preview_photos": "📸 <b>Фотографии:</b> ✅ Загружены",
+        "preview_footer": "\n<i>Проверьте данные и подтвердите</i>",
+        "btn_confirm": "✅ Подтвердить",
+        "btn_edit": "✏️ Редактировать",
+        "edit_select": "✏️ <b>Какое поле вы хотите изменить?</b>",
+        "edit_name": "👤 Ф.И.О.",
+        "edit_sex": "👤 Пол",
+        "edit_level": "🎓 Курс",
+        "edit_faculty": "🏛 Направление",
+        "edit_region": "📍 Область",
+        "edit_town": "🏘 Район/Город",
+        "edit_reason": "📝 Причина",
+        "edit_official_doc": "📄 Офиц. документ",
+        "edit_passport": "📸 Фото паспорта",
+        "edit_photo": "🖼 Фото 3x4",
+        "edit_phone": "📞 Телефон",
+        "edit_additional_phone": "📞 Доп. телефон",
+        "confirmed": (
+            "🎉🎊 <b>Ваша заявка успешно отправлена!</b> 🎊🎉\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "📋 Номер заявки: <b>#{id}</b>\n"
+            "✅ Ваши документы приняты.\n"
+            "🕓 Заявка будет рассмотрена рабочей группой до 10 августа.\n"
+            "🔔 Результат будет объявлен через этого бота!\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🤝 Спасибо! Удачи! 🍀"
+        ),
+        # Admin / results
+        "btn_publish_results": "📣 Опубликовать результаты",
+        "publish_prompt": (
+            "📣 <b>Публикация результатов</b>\n\n"
+            "Каждому заявителю из таблицы будет отправлено сообщение:\n"
+            "• Если в столбце <b>M</b> стоит <b>1</b> — принят ✅\n"
+            "• Иначе — отклонён ❌\n\n"
+            "Продолжить?"
+        ),
+        "btn_publish_confirm": "✅ Да, отправить",
+        "btn_publish_cancel": "❌ Отмена",
+        "publish_cancelled": "❌ Публикация результатов отменена.",
+        "publishing": "⏳ Отправка результатов, пожалуйста, подождите...",
+        "publish_done": (
+            "✅ <b>Результаты отправлены!</b>\n\n"
+            "🎉 Приняты: <b>{success}</b>\n"
+            "❌ Отклонены: <b>{failure}</b>\n"
+            "⚠️ Не доставлено: <b>{failed}</b>"
+        ),
+        "not_admin": "⛔️ Это действие доступно только администраторам.",
+        "result_success": (
+            "🎉🎊 <b>Поздравляем!</b> 🎊🎉\n\n"
+            "✅ Вы <b>приняты</b> в общежитие TTPU!\n\n"
+            "📞 Мы свяжемся с вами по поводу дальнейших шагов.\n"
+            "🍀 Удачи!"
+        ),
+        "result_failure": (
+            "📩 <b>Результат</b>\n\n"
+            "К сожалению, в этот раз вы <b>не приняты</b> в общежитие.\n\n"
+            "🙏 Спасибо за вашу заявку. Желаем удачи в будущем!"
+        ),
+        "channel_caption": (
+            "📋 <b>НОВАЯ ЗАЯВКА #{id}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>Ф.И.О.:</b> {name}\n"
+            "👤 <b>Пол:</b> {sex}\n"
+            "🎓 <b>Курс:</b> {level}-курс\n"
+            "🏛 <b>Направление:</b> {faculty}\n"
+            "📍 <b>Область:</b> {region}\n"
+            "🏘 <b>Район:</b> {town}\n"
+            "📝 <b>Причина:</b> {reason}\n"
+            "📞 <b>Телефон:</b> {phone}\n"
+            "📞 <b>Доп. телефон:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        "preview_caption": (
+            "📋 <b>ПРОСМОТР ЗАЯВКИ</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "👤 <b>Ф.И.О.:</b> {name}\n"
+            "👤 <b>Пол:</b> {sex}\n"
+            "🎓 <b>Курс:</b> {level}-курс\n"
+            "🏛 <b>Направление:</b> {faculty}\n"
+            "📍 <b>Область:</b> {region}\n"
+            "🏘 <b>Район:</b> {town}\n"
+            "📝 <b>Причина:</b> {reason}\n"
+            "📞 <b>Телефон:</b> {phone}\n"
+            "📞 <b>Доп. телефон:</b> {additional_phone}\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        "faq_title": "❓ <b>Часто задаваемые вопросы</b>\n",
+        "faq_content": (
+            "<b>1. Как подать заявку?</b>\n"
+            "📝 Нажмите кнопку «Подать заявку» и заполните все данные.\n\n"
+            "<b>2. Какие документы нужны?</b>\n"
+            "📸 Фото основной страницы паспорта и фото формата 3x4.\n\n"
+            "<b>3. Когда объявляются результаты?</b>\n"
+            "📅 Результаты будут объявлены после сбора всех заявок.\n\n"
+            "<b>4. Контакты:</b>\n"
+            "📞 По дополнительным вопросам обращайтесь в университет."
+        ),
+        "other": "📌 Другое",
+        "level_year": "{n}-курс",
+    },
+}
+
+
+def t(key: str, lang: str, **kwargs) -> str:
+    """Get translated text by key and language, with optional formatting."""
+    text = TEXTS.get(lang, TEXTS["en"]).get(key, TEXTS["en"].get(key, key))
+    if kwargs:
+        text = text.format(**kwargs)
+    return text
