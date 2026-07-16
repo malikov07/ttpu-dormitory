@@ -36,11 +36,11 @@ def oferta_keyboard(lang: str) -> InlineKeyboardMarkup:
 def main_menu_keyboard(lang: str, is_admin: bool = False) -> ReplyKeyboardMarkup:
     """Main menu reply keyboard. Admins get an extra 'Publish results' button."""
     keyboard = [
-        [KeyboardButton(text=t("btn_apply", lang))],
-        [
-            KeyboardButton(text=t("btn_change_lang", lang)),
-            KeyboardButton(text=t("btn_faq", lang)),
-        ],
+        [KeyboardButton(text=t("btn_apply", lang)), KeyboardButton(text=t("btn_change_lang", lang))],
+        # [
+        #     KeyboardButton(text=t("btn_change_lang", lang)),
+        #     KeyboardButton(text=t("btn_faq", lang)),
+        # ],
     ]
     if is_admin:
         keyboard.append([KeyboardButton(text=t("btn_publish_results", lang))])
