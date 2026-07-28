@@ -38,7 +38,32 @@ from utils.preview import _send_items, build_preview_caption, send_to_channel
 router = Router()
 logger = logging.getLogger(__name__)
 
-PHONE_RE = re.compile(r"^\+?998\d{9}$")
+# International (E.164) number: country code + subscriber number, 8–15 digits total.
+PHONE_RE = re.compile(r"^\+[1-9]\d{7,14}$")
+PHONE_SEPARATORS_RE = re.compile(r"[\s\-().]")
+UZ_LOCAL_LEN = 9  # Uzbek subscriber number without the 998 country code
+
+
+def normalize_phone(raw: str):
+    """Return the number as +<country code><subscriber>, or None if it isn't valid.
+
+    Bare digits are only accepted when they are unambiguously Uzbek (998XXXXXXXXX or
+    a 9-digit local number); any other country must be typed with a leading "+".
+    """
+    phone = PHONE_SEPARATORS_RE.sub("", raw.strip())
+    if not phone.startswith("+"):
+        if phone.startswith("998"):
+            phone = "+" + phone
+        elif len(phone) == UZ_LOCAL_LEN and phone.isdigit():
+            phone = "+998" + phone
+        else:
+            return None
+    if not PHONE_RE.match(phone):
+        return None
+    # Uzbek numbers stay strictly validated so ordinary typos are still caught.
+    if phone.startswith("+998") and len(phone) != len("+998") + UZ_LOCAL_LEN:
+        return None
+    return phone
 
 
 async def _get_lang(state: FSMContext) -> str:
@@ -633,13 +658,10 @@ async def process_phone_text(message: Message, state: FSMContext) -> None:
     if message.text in [TEXTS[la]["btn_back"] for la in TEXTS]:
         return
 
-    phone = message.text.strip().replace(" ", "").replace("-", "")
-    if not PHONE_RE.match(phone):
+    phone = normalize_phone(message.text)
+    if phone is None:
         await message.answer(t("invalid_phone", lang), parse_mode="HTML")
         return
-
-    if not phone.startswith("+"):
-        phone = "+" + phone
 
     data = await state.get_data()
     editing = data.get("editing")
@@ -688,13 +710,10 @@ async def process_additional_phone_text(message: Message, state: FSMContext) -> 
     if message.text in [TEXTS[la]["btn_back"] for la in TEXTS]:
         return
 
-    phone = message.text.strip().replace(" ", "").replace("-", "")
-    if not PHONE_RE.match(phone):
+    phone = normalize_phone(message.text)
+    if phone is None:
         await message.answer(t("invalid_phone", lang), parse_mode="HTML")
         return
-
-    if not phone.startswith("+"):
-        phone = "+" + phone
 
     data = await state.get_data()
     if phone == data.get("phone", ""):

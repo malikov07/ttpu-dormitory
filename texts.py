@@ -50,16 +50,24 @@ TEXTS = {
         "ask_official_doc_invalid": "⚠️ Iltimos, rasm yoki hujjat fayli (PDF, Word, taqdimot) yuboring.",
         "ask_passport": "📸 <b>Pasport rasmini yuboring:</b>\n\n<i>Pasportning asosiy sahifasi rasmini yuboring</i>",
         "ask_photo_3x4": "🖼 <b>3x4 rasmingizni yuboring:</b>\n\n<i>Standart 3x4 formatdagi rasmingizni yuboring</i>",
-        "ask_phone": "📞 <b>Telefon raqamingizni yuboring:</b>\n\n<i>Tugmani bosing yoki +998XXXXXXXXX formatida kiriting</i>",
+        "ask_phone": (
+            "📞 <b>Telefon raqamingizni yuboring:</b>\n\n"
+            "<i>Tugmani bosing yoki +998XXXXXXXXX formatida kiriting.\n"
+            "Chet el raqami bo'lsa, mamlakat kodi bilan kiriting, masalan +905XXXXXXXX</i>"
+        ),
         "ask_additional_phone": (
             "📞 <b>Qo'shimcha telefon raqamni kiriting:</b>\n\n"
-            "<i>+998XXXXXXXXX formatida kiriting</i>"
+            "<i>+998XXXXXXXXX formatida kiriting.\n"
+            "Chet el raqami bo'lsa, mamlakat kodi bilan kiriting, masalan +905XXXXXXXX</i>"
         ),
         "btn_share_phone": "📱 Telefon raqamni yuborish",
         # Validation
         "invalid_name": "⚠️ Ism kamida 5 ta belgidan iborat bo'lishi kerak. Qaytadan kiriting:",
         "send_photo_only": "⚠️ Iltimos, rasm yoki fayl yuboring.",
-        "invalid_phone": "⚠️ Telefon raqami noto'g'ri. +998XXXXXXXXX formatida kiriting yoki tugmani bosing.",
+        "invalid_phone": (
+            "⚠️ Telefon raqami noto'g'ri. +998XXXXXXXXX formatida kiriting yoki tugmani bosing.\n"
+            "Chet el raqamini mamlakat kodi bilan, «+» belgisidan boshlab kiriting."
+        ),
         "same_phone_error": "⚠️ Qo'shimcha raqam asosiy telefon raqamidan farq qilishi kerak.",
         # Preview
         "preview_title": "📋 <b>Arizangizni tekshiring:</b>\n",
@@ -230,15 +238,23 @@ TEXTS = {
         "ask_official_doc_invalid": "⚠️ Please send a photo or document file (PDF, Word, presentation).",
         "ask_passport": "📸 <b>Send your passport photo:</b>\n\n<i>Send a photo of the main page of your passport</i>",
         "ask_photo_3x4": "🖼 <b>Send your 3x4 photo:</b>\n\n<i>Send a standard 3x4 format photo</i>",
-        "ask_phone": "📞 <b>Send your phone number:</b>\n\n<i>Press the button or type in +998XXXXXXXXX format</i>",
+        "ask_phone": (
+            "📞 <b>Send your phone number:</b>\n\n"
+            "<i>Press the button or type in +998XXXXXXXXX format.\n"
+            "For a foreign number, include the country code, e.g. +905XXXXXXXX</i>"
+        ),
         "ask_additional_phone": (
             "📞 <b>Enter additional phone number:</b>\n\n"
-            "<i>Enter in +998XXXXXXXXX format</i>"
+            "<i>Enter in +998XXXXXXXXX format.\n"
+            "For a foreign number, include the country code, e.g. +905XXXXXXXX</i>"
         ),
         "btn_share_phone": "📱 Share Phone Number",
         "invalid_name": "⚠️ Name must be at least 5 characters. Please try again:",
         "send_photo_only": "⚠️ Please send a photo or image file.",
-        "invalid_phone": "⚠️ Invalid phone number. Please use +998XXXXXXXXX format or press the button.",
+        "invalid_phone": (
+            "⚠️ Invalid phone number. Please use +998XXXXXXXXX format or press the button.\n"
+            "Foreign numbers must start with «+» and include the country code."
+        ),
         "same_phone_error": "⚠️ Additional number must be different from the main phone number.",
         "preview_title": "📋 <b>Review your application:</b>\n",
         "preview_name": "👤 <b>Full Name:</b> {value}",
@@ -404,15 +420,23 @@ TEXTS = {
         "ask_official_doc_invalid": "⚠️ Пожалуйста, отправьте фото или файл документа (PDF, Word, презентация).",
         "ask_passport": "📸 <b>Отправьте фото паспорта:</b>\n\n<i>Отправьте фото основной страницы паспорта</i>",
         "ask_photo_3x4": "🖼 <b>Отправьте фото 3x4:</b>\n\n<i>Отправьте фото стандартного формата 3x4</i>",
-        "ask_phone": "📞 <b>Отправьте номер телефона:</b>\n\n<i>Нажмите кнопку или введите в формате +998XXXXXXXXX</i>",
+        "ask_phone": (
+            "📞 <b>Отправьте номер телефона:</b>\n\n"
+            "<i>Нажмите кнопку или введите в формате +998XXXXXXXXX.\n"
+            "Для зарубежного номера укажите код страны, например +905XXXXXXXX</i>"
+        ),
         "ask_additional_phone": (
             "📞 <b>Введите дополнительный номер телефона:</b>\n\n"
-            "<i>Введите в формате +998XXXXXXXXX</i>"
+            "<i>Введите в формате +998XXXXXXXXX.\n"
+            "Для зарубежного номера укажите код страны, например +905XXXXXXXX</i>"
         ),
         "btn_share_phone": "📱 Отправить номер телефона",
         "invalid_name": "⚠️ Имя должно содержать минимум 5 символов. Попробуйте снова:",
         "send_photo_only": "⚠️ Пожалуйста, отправьте фото или файл изображения.",
-        "invalid_phone": "⚠️ Неверный номер телефона. Используйте формат +998XXXXXXXXX или нажмите кнопку.",
+        "invalid_phone": (
+            "⚠️ Неверный номер телефона. Используйте формат +998XXXXXXXXX или нажмите кнопку.\n"
+            "Зарубежный номер вводите с «+» и кодом страны."
+        ),
         "same_phone_error": "⚠️ Дополнительный номер должен отличаться от основного.",
         "preview_title": "📋 <b>Проверьте вашу заявку:</b>\n",
         "preview_name": "👤 <b>Ф.И.О.:</b> {value}",
