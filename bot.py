@@ -11,6 +11,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import BOT_TOKEN
 from handlers import start, menu, application, admin
+from utils.google_api import sync_applied_users
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,6 +39,10 @@ async def main() -> None:
     dp.include_router(admin.router)
     dp.include_router(start.router)
     dp.include_router(menu.router)
+
+    # Pick up applicants already in the sheet so they cannot apply a second time.
+    added = await sync_applied_users()
+    logger.info("Synced %d previously-recorded applicant(s) from the spreadsheet.", added)
 
     logger.info("Bot is starting...")
     await dp.start_polling(bot)

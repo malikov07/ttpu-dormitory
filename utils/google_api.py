@@ -11,6 +11,7 @@ from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
 from config import SPREADSHEET_ID, CHANNEL_ID
+from utils.applied_store import seed
 from utils.lang_store import get_user_lang, save_user_lang
 from utils.preview import format_phone
 
@@ -188,6 +189,45 @@ async def process_and_save_application(bot: Bot, data: dict, app_id: int, msg_id
         logger.info(f"Successfully saved application {app_id} to Google Sheets.")
     except Exception as e:
         logger.error(f"Failed to append data to Spreadsheet for app {app_id}: {e}")
+
+
+def _read_applicant_ids_sync(sheets_service) -> list:
+    """Read L=Telegram ID for every row that has one."""
+    response = sheets_service.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range="Sheet1!L1:L",
+    ).execute()
+    ids = []
+    for row in response.get("values", []):
+        raw = row[0].strip() if row and row[0] else ""
+        if not raw:
+            continue
+        try:
+            ids.append(int(float(raw)))
+        except (ValueError, TypeError):
+            continue  # header row or stray text
+    return ids
+
+
+async def sync_applied_users() -> int:
+    """Seed the local applied-users record from the spreadsheet.
+
+    Called at startup so applicants already in the sheet stay blocked from
+    re-applying, even if the local file was never written or has been lost.
+    Returns how many ids were newly recorded.
+    """
+    sheets_service = get_services()
+    if not sheets_service:
+        logger.error("Could not obtain Google Services to sync applied users.")
+        return 0
+
+    try:
+        ids = await asyncio.to_thread(_read_applicant_ids_sync, sheets_service)
+    except Exception as e:
+        logger.error(f"Failed to read applicant ids from spreadsheet: {e}")
+        return 0
+
+    return seed(ids)
 
 
 def _read_results_sync(sheets_service) -> list:

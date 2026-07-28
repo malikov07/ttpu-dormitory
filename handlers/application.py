@@ -32,6 +32,7 @@ from keyboards import (
 )
 from states import ApplicationForm
 from texts import TEXTS, t
+from utils.applied_store import already_applied_text, has_applied, mark_applied
 from utils.google_api import process_and_save_application
 from utils.preview import _send_items, build_preview_caption, send_to_channel
 
@@ -739,9 +740,25 @@ async def process_confirm(callback: CallbackQuery, state: FSMContext, bot: Bot) 
 
     await safe_delete(callback.message)
 
-    admin = is_admin(callback.from_user.id)
+    uid = callback.from_user.id
+    admin = is_admin(uid)
+
+    # The guard above only covers a double-tap within one session. This catches a
+    # form filled in before an earlier application was recorded, or across a restart.
+    if has_applied(uid):
+        await callback.message.answer(
+            already_applied_text(uid, lang),
+            reply_markup=main_menu_keyboard(lang, admin),
+            parse_mode="HTML",
+        )
+        await state.clear()
+        await state.update_data(lang=lang, oferta_agreed=True)
+        return
+
     try:
         app_id, msg_id = await send_to_channel(bot, CHANNEL_ID, data, lang)
+        # Recorded once the application exists; a failed post leaves them free to retry.
+        mark_applied(uid, app_id)
         asyncio.create_task(process_and_save_application(bot, data, app_id, msg_id))
         await callback.message.answer(
             t("confirmed", lang, id=app_id),

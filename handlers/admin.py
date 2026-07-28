@@ -1,12 +1,14 @@
-"""Admin handlers — publishing admission results to applicants."""
+"""Admin handlers — publishing admission results, unblocking re-applications."""
 
 from aiogram import Bot, F, Router
+from aiogram.filters import Command, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from config import is_admin
 from keyboards import main_menu_keyboard, publish_confirm_keyboard
 from texts import TEXTS, t
+from utils.applied_store import clear_applied
 from utils.google_api import publish_results
 from utils.tg import safe_delete
 
@@ -33,6 +35,30 @@ async def handle_publish_button(message: Message, state: FSMContext) -> None:
         reply_markup=publish_confirm_keyboard(lang),
         parse_mode="HTML",
     )
+
+
+@router.message(Command("allow_reapply"))
+async def handle_allow_reapply(
+    message: Message, state: FSMContext, command: CommandObject
+) -> None:
+    """Admin: clear a user's application record so they can submit a new one.
+
+    The old application stays in the channel and the sheet — remove it there by hand
+    if it should not be considered.
+    """
+    lang = await _get_lang(state)
+    if not is_admin(message.from_user.id):
+        await message.answer(t("not_admin", lang), parse_mode="HTML")
+        return
+
+    try:
+        target_id = int((command.args or "").strip())
+    except ValueError:
+        await message.answer(t("reapply_usage", lang), parse_mode="HTML")
+        return
+
+    key = "reapply_done" if clear_applied(target_id) else "reapply_not_found"
+    await message.answer(t(key, lang, id=target_id), parse_mode="HTML")
 
 
 @router.callback_query(F.data == "publish:cancel")

@@ -15,6 +15,17 @@ TEXTS = {
         "btn_back": "⬅️ Ortga",
         "btn_skip": "⏭ O'tkazib yuborish",
         "cancelled": "❌ Ariza bekor qilindi. Asosiy menyuga qaytdingiz.",
+        "already_applied": (
+            "⚠️ <b>Siz allaqachon ariza topshirgansiz.</b>\n\n"
+            "Har bir nomzoddan faqat bitta ariza qabul qilinadi.\n"
+            "Ma'lumotlarni o'zgartirish kerak bo'lsa, yotoqxona ma'muriyatiga murojaat qiling."
+        ),
+        "already_applied_with_id": (
+            "⚠️ <b>Siz allaqachon ariza topshirgansiz.</b>\n\n"
+            "🆔 Ariza raqami: <b>{id}</b>\n\n"
+            "Har bir nomzoddan faqat bitta ariza qabul qilinadi.\n"
+            "Ma'lumotlarni o'zgartirish kerak bo'lsa, yotoqxona ma'muriyatiga murojaat qiling."
+        ),
         "submit_error": "❌ Arizani yuborishda xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
         # Oferta
         "oferta_message": (
@@ -129,6 +140,12 @@ TEXTS = {
             "⚠️ Yuborilmadi: <b>{failed}</b>"
         ),
         "not_admin": "⛔️ Bu amal faqat administratorlar uchun.",
+        "reapply_usage": "ℹ️ Foydalanish: <code>/allow_reapply &lt;telegram_id&gt;</code>",
+        "reapply_done": (
+            "✅ <b>{id}</b> foydalanuvchisi yangi ariza topshirishi mumkin.\n\n"
+            "<i>Eski ariza kanalda va jadvalda qoladi — kerak bo'lsa qo'lda o'chiring.</i>"
+        ),
+        "reapply_not_found": "ℹ️ <b>{id}</b> foydalanuvchisidan ariza topilmadi.",
         "result_success": (
             "🎉🎊 <b>Tabriklaymiz!</b> 🎊🎉\n\n"
             "✅ Siz TTPU yotoqxonasiga <b>qabul qilindingiz!</b>\n\n"
@@ -203,6 +220,17 @@ TEXTS = {
         "btn_back": "⬅️ Back",
         "btn_skip": "⏭ Skip",
         "cancelled": "❌ Application cancelled. You are back in the main menu.",
+        "already_applied": (
+            "⚠️ <b>You have already submitted an application.</b>\n\n"
+            "Only one application per applicant is accepted.\n"
+            "If you need to change something, contact the dormitory administration."
+        ),
+        "already_applied_with_id": (
+            "⚠️ <b>You have already submitted an application.</b>\n\n"
+            "🆔 Application number: <b>{id}</b>\n\n"
+            "Only one application per applicant is accepted.\n"
+            "If you need to change something, contact the dormitory administration."
+        ),
         "submit_error": "❌ Something went wrong while submitting your application. Please try again.",
         # Oferta
         "oferta_message": (
@@ -314,6 +342,12 @@ TEXTS = {
             "⚠️ Failed to deliver: <b>{failed}</b>"
         ),
         "not_admin": "⛔️ This action is for administrators only.",
+        "reapply_usage": "ℹ️ Usage: <code>/allow_reapply &lt;telegram_id&gt;</code>",
+        "reapply_done": (
+            "✅ User <b>{id}</b> can submit a new application.\n\n"
+            "<i>The old application stays in the channel and the sheet — remove it by hand if needed.</i>"
+        ),
+        "reapply_not_found": "ℹ️ No application on record for user <b>{id}</b>.",
         "result_success": (
             "🎉🎊 <b>Congratulations!</b> 🎊🎉\n\n"
             "✅ You have been <b>accepted</b> to the TTPU dormitory!\n\n"
@@ -385,6 +419,17 @@ TEXTS = {
         "btn_back": "⬅️ Назад",
         "btn_skip": "⏭ Пропустить",
         "cancelled": "❌ Заявка отменена. Вы вернулись в главное меню.",
+        "already_applied": (
+            "⚠️ <b>Вы уже подали заявку.</b>\n\n"
+            "От одного абитуриента принимается только одна заявка.\n"
+            "Если нужно что-то изменить, обратитесь к администрации общежития."
+        ),
+        "already_applied_with_id": (
+            "⚠️ <b>Вы уже подали заявку.</b>\n\n"
+            "🆔 Номер заявки: <b>{id}</b>\n\n"
+            "От одного абитуриента принимается только одна заявка.\n"
+            "Если нужно что-то изменить, обратитесь к администрации общежития."
+        ),
         "submit_error": "❌ Произошла ошибка при отправке заявки. Пожалуйста, попробуйте снова.",
         # Oferta
         "oferta_message": (
@@ -496,6 +541,12 @@ TEXTS = {
             "⚠️ Не доставлено: <b>{failed}</b>"
         ),
         "not_admin": "⛔️ Это действие доступно только администраторам.",
+        "reapply_usage": "ℹ️ Использование: <code>/allow_reapply &lt;telegram_id&gt;</code>",
+        "reapply_done": (
+            "✅ Пользователь <b>{id}</b> может подать новую заявку.\n\n"
+            "<i>Старая заявка останется в канале и таблице — удалите её вручную при необходимости.</i>"
+        ),
+        "reapply_not_found": "ℹ️ Заявка пользователя <b>{id}</b> не найдена.",
         "result_success": (
             "🎉🎊 <b>Поздравляем!</b> 🎊🎉\n\n"
             "✅ Вы <b>приняты</b> в общежитие TTPU!\n\n"
