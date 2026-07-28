@@ -51,7 +51,53 @@ def get_services():
 
 import re
 
-def _append_to_spreadsheet_sync(sheets_service, row_data: list, level: str):
+LINK_BLUE = {"red": 0.066, "green": 0.333, "blue": 0.8}
+
+
+def _link_cell_request(sheet_id: int, row_index: int, url: str) -> dict:
+    """Make column K a real clickable hyperlink.
+
+    Written as a text-format run rather than a =HYPERLINK() formula: formula
+    argument separators depend on the spreadsheet locale ("," vs ";"), so the
+    formula silently lands as plain text in some locales. A link run is what the
+    "Insert link" menu produces and is locale-independent.
+    """
+    return {
+        "updateCells": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": row_index,
+                "endRowIndex": row_index + 1,
+                "startColumnIndex": 10,  # Column K = Telegram Link
+                "endColumnIndex": 11,
+            },
+            "rows": [
+                {
+                    "values": [
+                        {
+                            "userEnteredValue": {"stringValue": url},
+                            "textFormatRuns": [
+                                {
+                                    "startIndex": 0,
+                                    "format": {
+                                        "link": {"uri": url},
+                                        "foregroundColor": LINK_BLUE,
+                                        "underline": True,
+                                    },
+                                }
+                            ],
+                        }
+                    ]
+                }
+            ],
+            "fields": "userEnteredValue,textFormatRuns",
+        }
+    }
+
+
+def _append_to_spreadsheet_sync(
+    sheets_service, row_data: list, level: str, telegram_url: str = ""
+):
     """Synchronous function to append a row to the spreadsheet and apply formatting."""
     body = {"values": [row_data]}
     response = sheets_service.spreadsheets().values().append(
@@ -107,28 +153,14 @@ def _append_to_spreadsheet_sync(sheets_service, row_data: list, level: str):
                         "fields": "userEnteredFormat(backgroundColor,textFormat)"
                     }
                 },
-                {
-                    "repeatCell": {
-                        "range": {
-                            "sheetId": sheet_id,
-                            "startRowIndex": row_index,
-                            "endRowIndex": row_index + 1,
-                            "startColumnIndex": 10,  # Column K = Telegram Link
-                            "endColumnIndex": 11
-                        },
-                        "cell": {
-                            "userEnteredFormat": {
-                                "textFormat": {
-                                    "foregroundColor": {"red": 0.066, "green": 0.333, "blue": 0.8}, # Link blue
-                                    "underline": True
-                                }
-                            }
-                        },
-                        "fields": "userEnteredFormat.textFormat"
-                    }
-                }
             ]
         }
+        # Applied after the row-wide format above, so the link run wins on column K.
+        if telegram_url:
+            format_request["requests"].append(
+                _link_cell_request(sheet_id, row_index, telegram_url)
+            )
+
         sheets_service.spreadsheets().batchUpdate(
             spreadsheetId=SPREADSHEET_ID,
             body=format_request
@@ -142,20 +174,19 @@ async def process_and_save_application(bot: Bot, data: dict, app_id: int, msg_id
         logger.error("Could not obtain Google Services.")
         return
 
-    # Prepare telegram deep link
+    # Prepare telegram deep link. The URL goes in as plain text; the cell is turned
+    # into a clickable link by _link_cell_request after the row is appended.
     channel_str = str(CHANNEL_ID)
     if channel_str.startswith("-100"):
         # Private channel deep link: https://t.me/c/123456789/msg_id
-        clean_channel_id = channel_str.replace("-100", "")
+        clean_channel_id = channel_str[len("-100"):]
         telegram_url = f"https://t.me/c/{clean_channel_id}/{msg_id}"
-        telegram_link = f'=HYPERLINK("{telegram_url}", "{telegram_url}")'
     elif channel_str.startswith("@"):
         # Public channel deep link: https://t.me/channelname/msg_id
-        clean_channel_id = channel_str.replace("@", "")
-        telegram_url = f"https://t.me/{clean_channel_id}/{msg_id}"
-        telegram_link = f'=HYPERLINK("{telegram_url}", "{telegram_url}")'
+        telegram_url = f"https://t.me/{channel_str[1:]}/{msg_id}"
     else:
-        telegram_link = "N/A"
+        telegram_url = ""
+    telegram_link = telegram_url or "N/A"
 
     # Columns: A=ID, B=Name, C=Sex, D=Level, E=Faculty, F=Region, G=Town,
     # H=Reason, I=Phone, J=Additional Phone, K=Telegram Link, L=Telegram ID,
@@ -175,7 +206,7 @@ async def process_and_save_application(bot: Bot, data: dict, app_id: int, msg_id
         _safe_cell(data.get("reason_uz", data.get("reason_name", ""))),
         _safe_cell(format_phone(data.get("phone", ""))),
         _safe_cell(format_phone(additional_phone_raw)) if additional_phone_raw else "",
-        telegram_link,  # intentional =HYPERLINK formula
+        telegram_link,  # K = plain URL text; linked by _link_cell_request below
         str(data.get("user_id", "")),  # L = Telegram ID for messaging
     ]
 
@@ -185,7 +216,9 @@ async def process_and_save_application(bot: Bot, data: dict, app_id: int, msg_id
         save_user_lang(int(user_id), data.get("lang", "uz"))
 
     try:
-        await asyncio.to_thread(_append_to_spreadsheet_sync, sheets_service, row_data, level_str)
+        await asyncio.to_thread(
+            _append_to_spreadsheet_sync, sheets_service, row_data, level_str, telegram_url
+        )
         logger.info(f"Successfully saved application {app_id} to Google Sheets.")
     except Exception as e:
         logger.error(f"Failed to append data to Spreadsheet for app {app_id}: {e}")
