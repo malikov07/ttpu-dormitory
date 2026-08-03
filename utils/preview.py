@@ -34,16 +34,36 @@ def format_phone(phone: str) -> str:
     return phone
 
 
+def _read_counter() -> int:
+    """Return the last issued application id, or 0 if there is no usable record."""
+    if not COUNTER_FILE.exists():
+        return 0
+    try:
+        data = json.loads(COUNTER_FILE.read_text())
+        return int(data.get("count", 0))
+    except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+        return 0
+
+
 def _get_next_id() -> int:
-    count = 1
-    if COUNTER_FILE.exists():
-        try:
-            data = json.loads(COUNTER_FILE.read_text())
-            count = data.get("count", 0) + 1
-        except (json.JSONDecodeError, KeyError):
-            count = 1
+    count = _read_counter() + 1
     COUNTER_FILE.write_text(json.dumps({"count": count}))
     return count
+
+
+def seed_counter(highest_id: int) -> bool:
+    """Raise the counter to highest_id when the local file lags behind the sheet.
+
+    The counter lives only on disk, so a lost or fresh host would restart ids at 1
+    and collide with applications already recorded in the spreadsheet. Seeding from
+    the sheet at startup makes the id sequence survive a host migration.
+
+    Only ever moves the counter forward — an id is never reissued.
+    """
+    if highest_id <= _read_counter():
+        return False
+    COUNTER_FILE.write_text(json.dumps({"count": int(highest_id)}))
+    return True
 
 
 def _caption_args(data: dict, lang: str) -> dict:

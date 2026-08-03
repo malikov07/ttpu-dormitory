@@ -11,7 +11,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import BOT_TOKEN
 from handlers import start, menu, application, admin
-from utils.google_api import sync_applied_users
+from utils.google_api import sync_app_counter, sync_applied_users
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,7 +44,17 @@ async def main() -> None:
     added = await sync_applied_users()
     logger.info("Synced %d previously-recorded applicant(s) from the spreadsheet.", added)
 
+    # Keep the id sequence continuous across host moves — the counter is local state.
+    highest = await sync_app_counter()
+    logger.info("Application ids resume after %d.", highest)
+
     logger.info("Bot is starting...")
+    # Discard updates queued while the bot was down. The FSM lives in memory, so any
+    # form in progress is gone on restart and replaying those messages only confuses
+    # people. Must be done here: start_polling has no drop_pending_updates parameter,
+    # and passing one there is silently absorbed into **kwargs.
+    await bot.delete_webhook(drop_pending_updates=True)
+
     await dp.start_polling(bot)
 
 

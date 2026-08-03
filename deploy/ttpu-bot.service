@@ -1,0 +1,43 @@
+[Unit]
+Description=TTPU Dormitory Application Bot
+After=network-online.target
+Wants=network-online.target
+
+# Never give up restarting: these belong in [Unit], systemd warns if they sit in
+# [Service]. Zero interval disables the rate limit that would otherwise stop the
+# service permanently after 5 restarts in 10 seconds.
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=ttpu
+Group=ttpu
+WorkingDirectory=/opt/ttpu-dor
+ExecStart=/opt/ttpu-dor/.venv/bin/python /opt/ttpu-dor/bot.py
+
+# The bot long-polls Telegram; a dropped connection or an API hiccup should never
+# leave it dead. Always come back, but back off so a hard failure (bad token,
+# revoked credentials) does not spin in a tight restart loop.
+Restart=always
+RestartSec=10
+
+# Unbuffered output so journalctl shows log lines as they happen rather than in
+# 8 KB bursts — the reason the first restart attempt looks silent otherwise.
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ttpu-bot
+
+# Hardening. The bot only needs to read its own directory and write the three
+# JSON state files that live there.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/ttpu-dor
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

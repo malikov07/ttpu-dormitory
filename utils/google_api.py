@@ -13,7 +13,7 @@ from googleapiclient.discovery import build
 from config import SPREADSHEET_ID, CHANNEL_ID
 from utils.applied_store import seed
 from utils.lang_store import get_user_lang, save_user_lang
-from utils.preview import format_phone
+from utils.preview import format_phone, seed_counter
 
 logger = logging.getLogger(__name__)
 
@@ -261,6 +261,49 @@ async def sync_applied_users() -> int:
         return 0
 
     return seed(ids)
+
+
+def _read_highest_app_id_sync(sheets_service) -> int:
+    """Return the largest application id in column A, or 0 if there are none."""
+    response = sheets_service.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range="Sheet1!A1:A",
+    ).execute()
+    highest = 0
+    for row in response.get("values", []):
+        raw = row[0].strip() if row and row[0] else ""
+        if not raw:
+            continue
+        try:
+            highest = max(highest, int(float(raw)))
+        except (ValueError, TypeError):
+            continue  # header row or stray text
+    return highest
+
+
+async def sync_app_counter() -> int:
+    """Align the local id counter with the spreadsheet at startup.
+
+    The counter file is local state; on a fresh or restored host it would otherwise
+    restart at 1 and hand out ids that already exist in the sheet. Returns the id the
+    counter now sits at, or 0 if the sheet could not be read.
+    """
+    sheets_service = get_services()
+    if not sheets_service:
+        logger.error("Could not obtain Google Services to sync the id counter.")
+        return 0
+
+    try:
+        highest = await asyncio.to_thread(_read_highest_app_id_sync, sheets_service)
+    except Exception as e:
+        logger.error(f"Failed to read the highest application id from spreadsheet: {e}")
+        return 0
+
+    if seed_counter(highest):
+        logger.warning(
+            "Application id counter was behind the sheet — advanced it to %d.", highest
+        )
+    return highest
 
 
 def _read_results_sync(sheets_service) -> list:

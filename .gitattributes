@@ -1,0 +1,5 @@
+# Files that run on the Linux server must keep LF endings. A CRLF checkout on
+# Windows that is then copied to the server (e.g. via rsync) fails at the first
+# line with: $'\r': command not found
+*.sh text eol=lf
+*.service text eol=lf
