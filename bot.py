@@ -9,9 +9,10 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import BOT_TOKEN
+from config import BOT_TOKEN, RESULT_POLL_SECONDS
 from handlers import start, menu, application, admin
 from utils.google_api import sync_app_counter, sync_applied_users
+from utils.results import results_watcher
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,7 +56,12 @@ async def main() -> None:
     # and passing one there is silently absorbed into **kwargs.
     await bot.delete_webhook(drop_pending_updates=True)
 
-    await dp.start_polling(bot)
+    # Watches the sheet for finished decisions and delivers them on its own.
+    watcher = asyncio.create_task(results_watcher(bot, RESULT_POLL_SECONDS))
+    try:
+        await dp.start_polling(bot)
+    finally:
+        watcher.cancel()
 
 
 if __name__ == "__main__":

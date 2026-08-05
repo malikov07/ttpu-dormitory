@@ -8,6 +8,7 @@ credentials.json
 user_langs.json
 app_counter.json
 applied_users.json
+results_state.json
 
 # Python
 __pycache__/

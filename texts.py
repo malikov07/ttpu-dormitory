@@ -121,23 +121,30 @@ TEXTS = {
             "🤝 E'tiboringiz uchun rahmat! Omad tilaymiz! 🍀"
         ),
         # Admin / results
-        "btn_publish_results": "📣 Natijalarni e'lon qilish",
+        "btn_publish_results": "📣 Tayyor natijalarni yuborish",
         "publish_prompt": (
-            "📣 <b>Natijalarni e'lon qilish</b>\n\n"
-            "Jadvaldagi barcha arizachilarga natija xabari yuboriladi:\n"
-            "• <b>M</b> ustunida <b>1</b> bo‘lsa — qabul qilindi ✅\n"
-            "• Aks holda — rad etildi ❌\n\n"
+            "📣 <b>Natijalarni yuborish</b>\n\n"
+            "Bot jadvalni doimiy kuzatadi va har bir arizachiga natijani o‘zi yuboradi. "
+            "Bu tugma shu tekshiruvni hoziroq bajaradi.\n\n"
+            "Qator yuborilishi uchun:\n"
+            "• <b>M</b> — holat: <b>2</b> qabul qilindi, <b>1</b> suhbatga, <b>0</b> rad etildi\n"
+            "• <b>N</b> — izoh (majburiy, arizachiga ko‘rinadi)\n"
+            "• matn <b>{minutes} daqiqa</b> o‘zgarmagan bo‘lishi kerak\n\n"
             "Davom etasizmi?"
         ),
         "btn_publish_confirm": "✅ Ha, yuborilsin",
         "btn_publish_cancel": "❌ Bekor qilish",
-        "publish_cancelled": "❌ Natijalarni e'lon qilish bekor qilindi.",
+        "publish_cancelled": "❌ Natijalarni yuborish bekor qilindi.",
         "publishing": "⏳ Natijalar yuborilmoqda, iltimos kuting...",
         "publish_done": (
-            "✅ <b>Natijalar yuborildi!</b>\n\n"
-            "🎉 Qabul qilinganlar: <b>{success}</b>\n"
-            "❌ Rad etilganlar: <b>{failure}</b>\n"
-            "⚠️ Yuborilmadi: <b>{failed}</b>"
+            "✅ <b>Tekshiruv yakunlandi</b>\n\n"
+            "🎉 Qabul qilindi (2): <b>{accepted}</b>\n"
+            "🗣 Suhbatga taklif (1): <b>{interview}</b>\n"
+            "❌ Rad etildi (0): <b>{rejected}</b>\n"
+            "⚠️ Yuborilmadi: <b>{failed}</b>\n\n"
+            "⏳ Matn hali o‘zgarib turibdi: <b>{waiting}</b>\n"
+            "✍️ Holat yoki izoh to‘ldirilmagan: <b>{pending}</b>\n"
+            "⬜️ Hali ko‘rib chiqilmagan: <b>{undecided}</b>"
         ),
         "not_admin": "⛔️ Bu amal faqat administratorlar uchun.",
         "reapply_usage": "ℹ️ Foydalanish: <code>/allow_reapply &lt;telegram_id&gt;</code>",
@@ -146,16 +153,31 @@ TEXTS = {
             "<i>Eski ariza kanalda va jadvalda qoladi — kerak bo'lsa qo'lda o'chiring.</i>"
         ),
         "reapply_not_found": "ℹ️ <b>{id}</b> foydalanuvchisidan ariza topilmadi.",
-        "result_success": (
+        "resend_usage": "ℹ️ Foydalanish: <code>/resend &lt;ariza raqami&gt;</code>",
+        "resend_done": (
+            "✅ <b>#{id}</b> arizasi bo‘yicha natija qayta yuboriladi.\n\n"
+            "<i>Jadvaldagi holat va izoh bir necha daqiqa o‘zgarmasa, bot uni o‘zi yuboradi.</i>"
+        ),
+        "resend_not_found": "ℹ️ <b>#{id}</b> arizasi bo‘yicha yuborilgan natija topilmadi.",
+        "result_accepted": (
             "🎉🎊 <b>Tabriklaymiz!</b> 🎊🎉\n\n"
             "✅ Siz TTPU yotoqxonasiga <b>qabul qilindingiz!</b>\n\n"
+            "💬 <b>Ishchi guruh izohi:</b>\n{reason}\n\n"
             "📞 Keyingi qadamlar bo‘yicha siz bilan bog‘lanamiz.\n"
             "🍀 Omad yor bo‘lsin!"
         ),
-        "result_failure": (
+        "result_interview": (
             "📩 <b>Natija</b>\n\n"
-            "Afsuski, bu safar siz yotoqxonaga <b>qabul qilinmadingiz.</b> Bo'sh joy mavjud bo'lishi bilan aloqaga chiqamiz.\n\n"
-            "🙏 Arizangiz uchun rahmat. Kelgusida omad tilaymiz!"
+            "🗣 Arizangiz ko‘rib chiqildi — siz <b>suhbatga taklif qilinasiz!</b>\n\n"
+            "💬 <b>Ishchi guruh izohi:</b>\n{reason}\n\n"
+            "📞 Suhbat vaqti va joyi haqida siz bilan bog‘lanamiz.\n"
+            "🍀 Omad!"
+        ),
+        "result_rejected": (
+            "📩 <b>Natija</b>\n\n"
+            "Afsuski, bu safar siz yotoqxonaga <b>qabul qilinmadingiz.</b>\n\n"
+            "💬 <b>Sabab:</b>\n{reason}\n\n"
+            "🙏 Arizangiz uchun rahmat. Bo‘sh joy paydo bo‘lsa, siz bilan bog‘lanamiz."
         ),
         # Channel (always sent in Uzbek)
         "channel_caption": (
@@ -323,23 +345,30 @@ TEXTS = {
             "🤝 Thank you! Good luck! 🍀"
         ),
         # Admin / results
-        "btn_publish_results": "📣 Publish results",
+        "btn_publish_results": "📣 Send finished results",
         "publish_prompt": (
-            "📣 <b>Publish results</b>\n\n"
-            "A result message will be sent to every applicant in the sheet:\n"
-            "• If column <b>M</b> is <b>1</b> — accepted ✅\n"
-            "• Otherwise — rejected ❌\n\n"
+            "📣 <b>Send results</b>\n\n"
+            "The bot watches the sheet and sends each applicant their result on its own. "
+            "This button just runs that check right now.\n\n"
+            "A row is sent when:\n"
+            "• <b>M</b> — status: <b>2</b> accepted, <b>1</b> invited to an interview, <b>0</b> rejected\n"
+            "• <b>N</b> — reason (required, the applicant sees it)\n"
+            "• the text has not changed for <b>{minutes} minutes</b>\n\n"
             "Do you want to continue?"
         ),
         "btn_publish_confirm": "✅ Yes, send",
         "btn_publish_cancel": "❌ Cancel",
-        "publish_cancelled": "❌ Publishing results was cancelled.",
+        "publish_cancelled": "❌ Sending results was cancelled.",
         "publishing": "⏳ Sending results, please wait...",
         "publish_done": (
-            "✅ <b>Results sent!</b>\n\n"
-            "🎉 Accepted: <b>{success}</b>\n"
-            "❌ Rejected: <b>{failure}</b>\n"
-            "⚠️ Failed to deliver: <b>{failed}</b>"
+            "✅ <b>Check finished</b>\n\n"
+            "🎉 Accepted (2): <b>{accepted}</b>\n"
+            "🗣 Invited to an interview (1): <b>{interview}</b>\n"
+            "❌ Rejected (0): <b>{rejected}</b>\n"
+            "⚠️ Failed to deliver: <b>{failed}</b>\n\n"
+            "⏳ Text still being edited: <b>{waiting}</b>\n"
+            "✍️ Status or reason missing: <b>{pending}</b>\n"
+            "⬜️ Not reviewed yet: <b>{undecided}</b>"
         ),
         "not_admin": "⛔️ This action is for administrators only.",
         "reapply_usage": "ℹ️ Usage: <code>/allow_reapply &lt;telegram_id&gt;</code>",
@@ -348,16 +377,31 @@ TEXTS = {
             "<i>The old application stays in the channel and the sheet — remove it by hand if needed.</i>"
         ),
         "reapply_not_found": "ℹ️ No application on record for user <b>{id}</b>.",
-        "result_success": (
+        "resend_usage": "ℹ️ Usage: <code>/resend &lt;application id&gt;</code>",
+        "resend_done": (
+            "✅ The result for application <b>#{id}</b> will be sent again.\n\n"
+            "<i>It goes out once the status and reason in the sheet have been unchanged for a few minutes.</i>"
+        ),
+        "resend_not_found": "ℹ️ No result has been sent for application <b>#{id}</b>.",
+        "result_accepted": (
             "🎉🎊 <b>Congratulations!</b> 🎊🎉\n\n"
             "✅ You have been <b>accepted</b> to the TTPU dormitory!\n\n"
+            "💬 <b>Comment from the working group:</b>\n{reason}\n\n"
             "📞 We will contact you about the next steps.\n"
             "🍀 Best of luck!"
         ),
-        "result_failure": (
+        "result_interview": (
+            "📩 <b>Result</b>\n\n"
+            "🗣 Your application has been reviewed — you are <b>invited to an interview!</b>\n\n"
+            "💬 <b>Comment from the working group:</b>\n{reason}\n\n"
+            "📞 We will contact you about the time and place.\n"
+            "🍀 Good luck!"
+        ),
+        "result_rejected": (
             "📩 <b>Result</b>\n\n"
             "Unfortunately, you were <b>not accepted</b> to the dormitory this time.\n\n"
-            "🙏 Thank you for your application. We wish you luck in the future!"
+            "💬 <b>Reason:</b>\n{reason}\n\n"
+            "🙏 Thank you for your application. We will get in touch if a place opens up."
         ),
         "channel_caption": (
             "📋 <b>NEW APPLICATION #{id}</b>\n"
@@ -522,23 +566,30 @@ TEXTS = {
             "🤝 Спасибо! Удачи! 🍀"
         ),
         # Admin / results
-        "btn_publish_results": "📣 Опубликовать результаты",
+        "btn_publish_results": "📣 Отправить готовые результаты",
         "publish_prompt": (
-            "📣 <b>Публикация результатов</b>\n\n"
-            "Каждому заявителю из таблицы будет отправлено сообщение:\n"
-            "• Если в столбце <b>M</b> стоит <b>1</b> — принят ✅\n"
-            "• Иначе — отклонён ❌\n\n"
+            "📣 <b>Отправка результатов</b>\n\n"
+            "Бот сам следит за таблицей и отправляет каждому заявителю его результат. "
+            "Эта кнопка просто выполняет проверку прямо сейчас.\n\n"
+            "Строка отправляется, если:\n"
+            "• <b>M</b> — статус: <b>2</b> принят, <b>1</b> приглашён на собеседование, <b>0</b> отклонён\n"
+            "• <b>N</b> — комментарий (обязателен, его увидит заявитель)\n"
+            "• текст не менялся <b>{minutes} минут</b>\n\n"
             "Продолжить?"
         ),
         "btn_publish_confirm": "✅ Да, отправить",
         "btn_publish_cancel": "❌ Отмена",
-        "publish_cancelled": "❌ Публикация результатов отменена.",
+        "publish_cancelled": "❌ Отправка результатов отменена.",
         "publishing": "⏳ Отправка результатов, пожалуйста, подождите...",
         "publish_done": (
-            "✅ <b>Результаты отправлены!</b>\n\n"
-            "🎉 Приняты: <b>{success}</b>\n"
-            "❌ Отклонены: <b>{failure}</b>\n"
-            "⚠️ Не доставлено: <b>{failed}</b>"
+            "✅ <b>Проверка завершена</b>\n\n"
+            "🎉 Приняты (2): <b>{accepted}</b>\n"
+            "🗣 На собеседование (1): <b>{interview}</b>\n"
+            "❌ Отклонены (0): <b>{rejected}</b>\n"
+            "⚠️ Не доставлено: <b>{failed}</b>\n\n"
+            "⏳ Текст ещё редактируется: <b>{waiting}</b>\n"
+            "✍️ Нет статуса или комментария: <b>{pending}</b>\n"
+            "⬜️ Ещё не рассмотрены: <b>{undecided}</b>"
         ),
         "not_admin": "⛔️ Это действие доступно только администраторам.",
         "reapply_usage": "ℹ️ Использование: <code>/allow_reapply &lt;telegram_id&gt;</code>",
@@ -547,16 +598,31 @@ TEXTS = {
             "<i>Старая заявка останется в канале и таблице — удалите её вручную при необходимости.</i>"
         ),
         "reapply_not_found": "ℹ️ Заявка пользователя <b>{id}</b> не найдена.",
-        "result_success": (
+        "resend_usage": "ℹ️ Использование: <code>/resend &lt;номер заявки&gt;</code>",
+        "resend_done": (
+            "✅ Результат по заявке <b>#{id}</b> будет отправлен повторно.\n\n"
+            "<i>Он уйдёт, когда статус и комментарий в таблице не будут меняться несколько минут.</i>"
+        ),
+        "resend_not_found": "ℹ️ По заявке <b>#{id}</b> результат не отправлялся.",
+        "result_accepted": (
             "🎉🎊 <b>Поздравляем!</b> 🎊🎉\n\n"
             "✅ Вы <b>приняты</b> в общежитие TTPU!\n\n"
+            "💬 <b>Комментарий рабочей группы:</b>\n{reason}\n\n"
             "📞 Мы свяжемся с вами по поводу дальнейших шагов.\n"
             "🍀 Удачи!"
         ),
-        "result_failure": (
+        "result_interview": (
+            "📩 <b>Результат</b>\n\n"
+            "🗣 Ваша заявка рассмотрена — вы <b>приглашены на собеседование!</b>\n\n"
+            "💬 <b>Комментарий рабочей группы:</b>\n{reason}\n\n"
+            "📞 Мы свяжемся с вами по поводу времени и места.\n"
+            "🍀 Удачи!"
+        ),
+        "result_rejected": (
             "📩 <b>Результат</b>\n\n"
             "К сожалению, в этот раз вы <b>не приняты</b> в общежитие.\n\n"
-            "🙏 Спасибо за вашу заявку. Желаем удачи в будущем!"
+            "💬 <b>Причина:</b>\n{reason}\n\n"
+            "🙏 Спасибо за вашу заявку. Мы свяжемся с вами, если появится место."
         ),
         "channel_caption": (
             "📋 <b>НОВАЯ ЗАЯВКА #{id}</b>\n"

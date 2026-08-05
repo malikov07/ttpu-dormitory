@@ -12,7 +12,7 @@ from googleapiclient.discovery import build
 
 from config import SPREADSHEET_ID, CHANNEL_ID
 from utils.applied_store import seed
-from utils.lang_store import get_user_lang, save_user_lang
+from utils.lang_store import save_user_lang
 from utils.preview import format_phone, seed_counter
 
 logger = logging.getLogger(__name__)
@@ -189,8 +189,9 @@ async def process_and_save_application(bot: Bot, data: dict, app_id: int, msg_id
     telegram_link = telegram_url or "N/A"
 
     # Columns: A=ID, B=Name, C=Sex, D=Level, E=Faculty, F=Region, G=Town,
-    # H=Reason, I=Phone, J=Additional Phone, K=Telegram Link, L=Telegram ID,
-    # M=Decision (admin fills: 1=accepted)
+    # H=Reason, I=Phone, J=Additional Phone, K=Telegram Link, L=Telegram ID.
+    # Tutors then fill M=Status (0/1/2) and N=Reason; the bot writes O=Sent.
+    # See utils/results.py.
     level_str = data.get("level", "")
     full_name = data.get("full_name", "").title()
     sex_uz = data.get("sex_uz", "")
@@ -306,60 +307,6 @@ async def sync_app_counter() -> int:
     return highest
 
 
-def _read_results_sync(sheets_service) -> list:
-    """Read L=Telegram ID and M=Decision from the sheet.
-
-    Returns a list of (telegram_id, accepted) for rows with a numeric ID.
-    Non-numeric cells (e.g. a header row) are skipped automatically.
-    """
-    response = sheets_service.spreadsheets().values().get(
-        spreadsheetId=SPREADSHEET_ID,
-        range="Sheet1!L1:M",
-    ).execute()
-    rows = response.get("values", [])
-    results = []
-    for row in rows:
-        tg_id_raw = row[0].strip() if len(row) > 0 and row[0] else ""
-        decision  = row[1].strip() if len(row) > 1 and row[1] else ""
-        if not tg_id_raw:
-            continue
-        try:
-            tg_id = int(float(tg_id_raw))
-        except (ValueError, TypeError):
-            continue
-        results.append((tg_id, decision == "1"))
-    return results
-
-
-async def publish_results(bot: Bot) -> dict:
-    """Send result messages to every applicant in their own language.
-
-    Language is looked up from the local user_langs.json file saved at submit time.
-    Returns a dict with counts: {"success", "failure", "failed"}.
-    """
-    from texts import t
-
-    counts = {"success": 0, "failure": 0, "failed": 0}
-    sheets_service = get_services()
-    if not sheets_service:
-        logger.error("Could not obtain Google Services for publishing results.")
-        return counts
-
-    try:
-        results = await asyncio.to_thread(_read_results_sync, sheets_service)
-    except Exception as e:
-        logger.error(f"Failed to read results from spreadsheet: {e}")
-        return counts
-
-    for tg_id, accepted in results:
-        lang = get_user_lang(tg_id)
-        text = t("result_success" if accepted else "result_failure", lang)
-        try:
-            await bot.send_message(chat_id=tg_id, text=text, parse_mode="HTML")
-            counts["success" if accepted else "failure"] += 1
-        except Exception as e:
-            counts["failed"] += 1
-            logger.warning(f"Could not send result to {tg_id}: {e}")
-        await asyncio.sleep(0.05)  # gentle rate limiting
-
-    return counts
+# Result delivery lives in utils/results.py — it reads M=Status, N=Reason and
+# writes O=Sent, and is driven by a background watcher rather than a single
+# all-at-once publish run.
