@@ -67,20 +67,40 @@ bot checks every two minutes and messages each applicant on its own.
 | Column | Filled by | Meaning |
 |---|---|---|
 | `M` — Status | tutors | `2` accepted · `1` invited to an interview · `0` not accepted |
-| `N` — Reason | tutors | free text, **required**; the applicant reads it word for word |
+| `N` — Reason | tutors | free text the applicant reads word for word. **Required for 2 and 0**, optional for 1 |
 | `O` — Sent | the bot | `✅ <date time>` when delivered, or why it could not be |
 
-A row only goes out once **both** M and N are filled **and** neither has changed
-for ten minutes. That delay is the whole point: tutors type the reason straight
-into the cell, Sheets saves every keystroke, and a Telegram message cannot be
-recalled — so the bot waits until the wording has stopped moving. Every edit
-restarts the ten minutes, so there is no rush to finish a sentence.
+A row only goes out once M is filled **and** nothing has changed for ten minutes.
+That delay is the whole point: tutors type the reason straight into the cell,
+Sheets saves every keystroke, and a Telegram message cannot be recalled — so the
+bot waits until the wording has stopped moving. Every edit restarts the ten
+minutes, so there is no rush to finish a sentence.
 
-Each applicant is messaged exactly once. Editing a row afterwards does **not**
-re-send it; the bot notes `✏️ keyin tahrirlandi` in column O and leaves it to a
-human. To actually send a corrected result, an admin runs `/resend <application
-id>`. Blank status means "not reviewed yet" — leaving M empty never sends a
-rejection, and anything other than 0/1/2 in M is ignored with a warning in the log.
+### Interviews happen in two steps
+
+Status `1` does not need a reason, because tutors decide who to interview long
+before there is a date to give them. A row marked `1` with N empty is sent as
+"you are invited, the details will follow", and column O records
+`✅ <date time> (suhbat ma'lumoti kutilmoqda)`.
+
+When the date is settled, the tutor writes it into `N` — the date and anything
+else the applicant should know, in their own words. After the same ten quiet
+minutes the bot delivers that text as a **second, separate message** and appends
+`📅 <date time>` to column O. This happens once per row; editing N after those
+details have gone out is treated as any other late edit.
+
+Filling M and N together still sends a single message with the reason in it, so
+nothing changes for tutors who already know the date.
+
+Apart from that follow-up, each applicant is messaged exactly once. Editing a row
+afterwards does **not** re-send it; the bot notes `✏️ keyin tahrirlandi` in column
+O and leaves it to a human. To actually send a corrected result, an admin runs
+`/resend <application id>`. Blank status means "not reviewed yet" — leaving M
+empty never sends a rejection, and anything other than 0/1/2 in M is ignored with
+a warning in the log.
+
+Every timestamp the bot writes — column O, the log, its state files — is Tashkent
+time (UTC+5), whatever the server's own clock is set to.
 
 Tune the timings with `RESULT_POLL_SECONDS` (default 120) and
 `RESULT_QUIET_SECONDS` (default 600) in `.env`.

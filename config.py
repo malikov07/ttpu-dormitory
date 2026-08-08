@@ -1,7 +1,19 @@
 import os
+from datetime import datetime, timedelta, timezone
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Every timestamp the tutors and applicants see is Tashkent time. Written as a
+# fixed +5 offset rather than a named zone: Uzbekistan has no daylight saving,
+# and a plain offset needs no tz database on the host.
+TASHKENT_TZ = timezone(timedelta(hours=5), "UTC+5")
+
+
+def now_tashkent() -> datetime:
+    """Current local time in Tashkent, wherever the server happens to run."""
+    return datetime.now(TASHKENT_TZ)
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID", "0"))

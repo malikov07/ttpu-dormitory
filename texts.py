@@ -128,8 +128,12 @@ TEXTS = {
             "Bu tugma shu tekshiruvni hoziroq bajaradi.\n\n"
             "Qator yuborilishi uchun:\n"
             "• <b>M</b> — holat: <b>2</b> qabul qilindi, <b>1</b> suhbatga, <b>0</b> rad etildi\n"
-            "• <b>N</b> — izoh (majburiy, arizachiga ko‘rinadi)\n"
+            "• <b>N</b> — izoh, arizachiga ko‘rinadi. <b>2</b> va <b>0</b> uchun majburiy; "
+            "<b>1</b> uchun bo‘sh qoldirilsa, xabarda izoh ko‘rsatilmaydi\n"
             "• matn <b>{minutes} daqiqa</b> o‘zgarmagan bo‘lishi kerak\n\n"
+            "📅 <b>1</b> qo‘yilgan qator izohsiz yuboriladi. Suhbat sanasi ma'lum bo‘lgach, "
+            "<b>N</b> ga sana va kerakli ma'lumotlarni yozing — bot uni alohida xabar "
+            "sifatida yuboradi (har bir qatorga bir marta).\n\n"
             "Davom etasizmi?"
         ),
         "btn_publish_confirm": "✅ Ha, yuborilsin",
@@ -141,8 +145,10 @@ TEXTS = {
             "🎉 Qabul qilindi (2): <b>{accepted}</b>\n"
             "🗣 Suhbatga taklif (1): <b>{interview}</b>\n"
             "❌ Rad etildi (0): <b>{rejected}</b>\n"
+            "📅 Suhbat ma'lumoti yuborildi: <b>{details}</b>\n"
             "⚠️ Yuborilmadi: <b>{failed}</b>\n\n"
             "⏳ Matn hali o‘zgarib turibdi: <b>{waiting}</b>\n"
+            "📝 Suhbat izohi kutilmoqda (N bo‘sh): <b>{no_details}</b>\n"
             "✍️ Holat yoki izoh to‘ldirilmagan: <b>{pending}</b>\n"
             "⬜️ Hali ko‘rib chiqilmagan: <b>{undecided}</b>"
         ),
@@ -170,14 +176,27 @@ TEXTS = {
             "📩 <b>Natija</b>\n\n"
             "🗣 Arizangiz ko‘rib chiqildi — siz <b>suhbatga taklif qilinasiz!</b>\n\n"
             "💬 <b>Ishchi guruh izohi:</b>\n{reason}\n\n"
-            "📞 Suhbat vaqti va joyi haqida siz bilan bog‘lanamiz.\n"
             "🍀 Omad!"
+        ),
+        # Same decision, but the tutors have not written anything yet — no empty
+        # "comment" section, and a promise of the details to come.
+        "result_interview_no_reason": (
+            "📩 <b>Natija</b>\n\n"
+            "🗣 Arizangiz ko‘rib chiqildi — siz <b>suhbatga taklif qilinasiz!</b>\n\n"
+            "📅 Suhbat sanasi belgilangach, barcha ma'lumotlarni shu yerda yuboramiz.\n"
+            "🔔 Xabarlarni o‘tkazib yubormaslik uchun botni bloklamang.\n\n"
+            "🍀 Omad!"
+        ),
+        # The follow-up: the date and everything else the tutors typed into N.
+        "result_interview_details": (
+            "📅 <b>Suhbat haqida ma'lumot</b>\n\n"
+            "{reason}\n\n"
+            "🍀 Omad tilaymiz!"
         ),
         "result_rejected": (
             "📩 <b>Natija</b>\n\n"
-            "Afsuski, bu safar siz yotoqxonaga <b>qabul qilinmadingiz.</b>\n\n"
-            "💬 <b>Sabab:</b>\n{reason}\n\n"
-            "🙏 Arizangiz uchun rahmat. Bo‘sh joy paydo bo‘lsa, siz bilan bog‘lanamiz."
+            "❌ Afsuski, arizangiz <b>rad etildi.</b>\n\n"
+            "💬 <b>Sabab:</b>\n{reason}\n"
         ),
         # Channel (always sent in Uzbek)
         "channel_caption": (
@@ -352,8 +371,12 @@ TEXTS = {
             "This button just runs that check right now.\n\n"
             "A row is sent when:\n"
             "• <b>M</b> — status: <b>2</b> accepted, <b>1</b> invited to an interview, <b>0</b> rejected\n"
-            "• <b>N</b> — reason (required, the applicant sees it)\n"
+            "• <b>N</b> — reason, the applicant sees it. Required for <b>2</b> and <b>0</b>; "
+            "leave it empty for <b>1</b> and no comment is shown in the message\n"
             "• the text has not changed for <b>{minutes} minutes</b>\n\n"
+            "📅 A row marked <b>1</b> goes out without a comment. Once the interview date "
+            "is known, write it — and anything else the applicant needs — into <b>N</b>, "
+            "and the bot sends it as a separate message (once per row).\n\n"
             "Do you want to continue?"
         ),
         "btn_publish_confirm": "✅ Yes, send",
@@ -365,8 +388,10 @@ TEXTS = {
             "🎉 Accepted (2): <b>{accepted}</b>\n"
             "🗣 Invited to an interview (1): <b>{interview}</b>\n"
             "❌ Rejected (0): <b>{rejected}</b>\n"
+            "📅 Interview details sent: <b>{details}</b>\n"
             "⚠️ Failed to deliver: <b>{failed}</b>\n\n"
             "⏳ Text still being edited: <b>{waiting}</b>\n"
+            "📝 Waiting for interview details (N empty): <b>{no_details}</b>\n"
             "✍️ Status or reason missing: <b>{pending}</b>\n"
             "⬜️ Not reviewed yet: <b>{undecided}</b>"
         ),
@@ -395,6 +420,18 @@ TEXTS = {
             "🗣 Your application has been reviewed — you are <b>invited to an interview!</b>\n\n"
             "💬 <b>Comment from the working group:</b>\n{reason}\n\n"
             "📞 We will contact you about the time and place.\n"
+            "🍀 Good luck!"
+        ),
+        "result_interview_no_reason": (
+            "📩 <b>Result</b>\n\n"
+            "🗣 Your application has been reviewed — you are <b>invited to an interview!</b>\n\n"
+            "📅 As soon as the interview date is set, we will send you all the details here.\n"
+            "🔔 Please do not block the bot, so you do not miss the message.\n\n"
+            "🍀 Good luck!"
+        ),
+        "result_interview_details": (
+            "📅 <b>Interview details</b>\n\n"
+            "{reason}\n\n"
             "🍀 Good luck!"
         ),
         "result_rejected": (
@@ -573,8 +610,12 @@ TEXTS = {
             "Эта кнопка просто выполняет проверку прямо сейчас.\n\n"
             "Строка отправляется, если:\n"
             "• <b>M</b> — статус: <b>2</b> принят, <b>1</b> приглашён на собеседование, <b>0</b> отклонён\n"
-            "• <b>N</b> — комментарий (обязателен, его увидит заявитель)\n"
+            "• <b>N</b> — комментарий, его увидит заявитель. Обязателен для <b>2</b> и <b>0</b>; "
+            "для <b>1</b> можно оставить пустым — тогда в сообщении комментария не будет\n"
             "• текст не менялся <b>{minutes} минут</b>\n\n"
+            "📅 Строка со статусом <b>1</b> уходит без комментария. Когда дата собеседования "
+            "станет известна, впишите её и всё остальное в <b>N</b> — бот отправит это "
+            "отдельным сообщением (один раз на строку).\n\n"
             "Продолжить?"
         ),
         "btn_publish_confirm": "✅ Да, отправить",
@@ -586,8 +627,10 @@ TEXTS = {
             "🎉 Приняты (2): <b>{accepted}</b>\n"
             "🗣 На собеседование (1): <b>{interview}</b>\n"
             "❌ Отклонены (0): <b>{rejected}</b>\n"
+            "📅 Отправлена информация о собеседовании: <b>{details}</b>\n"
             "⚠️ Не доставлено: <b>{failed}</b>\n\n"
             "⏳ Текст ещё редактируется: <b>{waiting}</b>\n"
+            "📝 Ждём информацию о собеседовании (N пуст): <b>{no_details}</b>\n"
             "✍️ Нет статуса или комментария: <b>{pending}</b>\n"
             "⬜️ Ещё не рассмотрены: <b>{undecided}</b>"
         ),
@@ -616,6 +659,18 @@ TEXTS = {
             "🗣 Ваша заявка рассмотрена — вы <b>приглашены на собеседование!</b>\n\n"
             "💬 <b>Комментарий рабочей группы:</b>\n{reason}\n\n"
             "📞 Мы свяжемся с вами по поводу времени и места.\n"
+            "🍀 Удачи!"
+        ),
+        "result_interview_no_reason": (
+            "📩 <b>Результат</b>\n\n"
+            "🗣 Ваша заявка рассмотрена — вы <b>приглашены на собеседование!</b>\n\n"
+            "📅 Как только дата собеседования будет назначена, мы пришлём сюда все подробности.\n"
+            "🔔 Пожалуйста, не блокируйте бота, чтобы не пропустить сообщение.\n\n"
+            "🍀 Удачи!"
+        ),
+        "result_interview_details": (
+            "📅 <b>Информация о собеседовании</b>\n\n"
+            "{reason}\n\n"
             "🍀 Удачи!"
         ),
         "result_rejected": (

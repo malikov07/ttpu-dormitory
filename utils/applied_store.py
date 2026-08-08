@@ -7,8 +7,9 @@ so students who applied before this record existed are still recognised.
 
 import json
 import logging
-from datetime import datetime
 from pathlib import Path
+
+from config import now_tashkent
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ def mark_applied(user_id: int, app_id) -> None:
     data = _load()
     data[str(user_id)] = {
         "app_id": app_id,
-        "at": datetime.now().isoformat(timespec="seconds"),
+        "at": now_tashkent().isoformat(timespec="seconds"),
     }
     _save(data)
 

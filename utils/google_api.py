@@ -3,7 +3,6 @@
 import asyncio
 import io
 import logging
-from datetime import datetime
 from pathlib import Path
 
 from aiogram import Bot

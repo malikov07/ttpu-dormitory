@@ -24,6 +24,10 @@ RestartSec=10
 # Unbuffered output so journalctl shows log lines as they happen rather than in
 # 8 KB bursts — the reason the first restart attempt looks silent otherwise.
 Environment=PYTHONUNBUFFERED=1
+
+# The bot writes its own timestamps in Tashkent time regardless (see config.py);
+# this lines the rest of the process up with it on a server running UTC.
+Environment=TZ=Asia/Tashkent
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=ttpu-bot

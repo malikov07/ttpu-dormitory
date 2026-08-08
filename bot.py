@@ -3,16 +3,25 @@
 import asyncio
 import logging
 import sys
+from datetime import datetime
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
-from config import BOT_TOKEN, RESULT_POLL_SECONDS
+from config import BOT_TOKEN, RESULT_POLL_SECONDS, TASHKENT_TZ
 from handlers import start, menu, application, admin
 from utils.google_api import sync_app_counter, sync_applied_users
 from utils.results import results_watcher
+
+# Log in Tashkent time too, so a line in journalctl can be compared directly with
+# the timestamps written into the sheet. staticmethod is not decoration for its
+# own sake: a plain function assigned to a class attribute is a descriptor, so
+# every formatter would call it with self as the timestamp and log nothing.
+logging.Formatter.converter = staticmethod(
+    lambda timestamp: datetime.fromtimestamp(timestamp, TASHKENT_TZ).timetuple()
+)
 
 logging.basicConfig(
     level=logging.INFO,
