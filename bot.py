@@ -14,6 +14,7 @@ from config import BOT_TOKEN, RESULT_POLL_SECONDS, TASHKENT_TZ
 from handlers import start, menu, application, admin
 from utils.google_api import sync_app_counter, sync_applied_users
 from utils.results import results_watcher
+from utils.translate import startup_summary
 
 # Log in Tashkent time too, so a line in journalctl can be compared directly with
 # the timestamps written into the sheet. staticmethod is not decoration for its
@@ -57,6 +58,8 @@ async def main() -> None:
     # Keep the id sequence continuous across host moves — the counter is local state.
     highest = await sync_app_counter()
     logger.info("Application ids resume after %d.", highest)
+
+    logger.info(startup_summary())
 
     logger.info("Bot is starting...")
     # Discard updates queued while the bot was down. The FSM lives in memory, so any

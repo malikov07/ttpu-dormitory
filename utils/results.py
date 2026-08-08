@@ -41,6 +41,7 @@ from aiogram.exceptions import (
 from config import RESULT_QUIET_SECONDS, SPREADSHEET_ID, now_tashkent
 from utils.google_api import get_services
 from utils.lang_store import get_user_lang
+from utils.translate import translate_reason
 
 logger = logging.getLogger(__name__)
 
@@ -199,8 +200,12 @@ def _write_sent_column_sync(sheets_service, stamps: list) -> None:
 
 # ---------------------------------------------------------------- delivery
 
-def _render(text_key: str, telegram_id: int, reason: str) -> str:
+async def _render(text_key: str, telegram_id: int, reason: str) -> str:
     """Build one message in the applicant's own language.
+
+    The template comes from texts.py; the reason is a tutor's free text, so it is
+    machine-translated to match. The tutor's exact words follow underneath —
+    see utils/translate.py for why a translation never travels alone.
 
     quote=False on purpose: messages go out as HTML, where only & < > need
     escaping. Escaping quotes too would turn every Uzbek o' and g' in the reason
@@ -208,11 +213,14 @@ def _render(text_key: str, telegram_id: int, reason: str) -> str:
     """
     from texts import t
 
-    return t(
-        text_key,
-        get_user_lang(telegram_id),
-        reason=html.escape(reason, quote=False),
-    )
+    lang = get_user_lang(telegram_id)
+    shown, translated = await translate_reason(reason, lang)
+
+    block = html.escape(shown, quote=False)
+    if translated:
+        block += t("reason_original", lang, original=html.escape(reason, quote=False))
+
+    return t(text_key, lang, reason=block)
 
 
 async def _try_send(bot: Bot, telegram_id: int, text: str) -> tuple:
@@ -302,7 +310,7 @@ async def deliver_ready_results(bot: Bot) -> dict:
                     outcome, detail = await _try_send(
                         bot,
                         row["telegram_id"],
-                        _render(INTERVIEW_DETAILS, row["telegram_id"], reason),
+                        await _render(INTERVIEW_DETAILS, row["telegram_id"], reason),
                     )
                     if outcome == "flood":
                         logger.warning(
@@ -424,7 +432,7 @@ async def deliver_ready_results(bot: Bot) -> dict:
             outcome, detail = await _try_send(
                 bot,
                 row["telegram_id"],
-                _render(text_key, row["telegram_id"], reason),
+                await _render(text_key, row["telegram_id"], reason),
             )
             if outcome == "flood":
                 # Stop this pass; the watcher picks the rest up.

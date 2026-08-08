@@ -27,9 +27,11 @@ ssh user@server 'sudo mv /tmp/.env /tmp/credentials.json /opt/ttpu-dor/'
 ```
 
 `.env` needs six variables: `BOT_TOKEN`, `CHANNEL_ID`, `SPREADSHEET_ID`,
-`DRIVE_FOLDER_ID`, `OFERTA_URL`, `ADMIN_IDS`. Two more are optional and only
-change result timings: `RESULT_POLL_SECONDS` (default 120) and
-`RESULT_QUIET_SECONDS` (default 600) — see "Announcing results" below.
+`DRIVE_FOLDER_ID`, `OFERTA_URL`, `ADMIN_IDS`. Four more are optional, all covered
+under "Announcing results" below: `RESULT_POLL_SECONDS` (default 120) and
+`RESULT_QUIET_SECONDS` (default 600) change result timings, while
+`GEMINI_API_KEY`, `GEMINI_MODEL` and `TRANSLATE_REASONS` control translating the
+reason into each applicant's language.
 
 ## 3. Run the setup script
 
@@ -51,6 +53,7 @@ A healthy start looks like:
 ```
 Synced N previously-recorded applicant(s) from the spreadsheet.
 Application ids resume after 286.
+Reason translation is on, via gemini-2.0-flash — applicants get the reason in their own language with the tutor's original underneath.
 Bot is starting...
 Result watcher started: checking every 120s, sending a row once it has been unchanged for 600s.
 Run polling for bot @ttpu_dormitory_bot
@@ -104,6 +107,47 @@ time (UTC+5), whatever the server's own clock is set to.
 
 Tune the timings with `RESULT_POLL_SECONDS` (default 120) and
 `RESULT_QUIET_SECONDS` (default 600) in `.env`.
+
+### Tutors write the reason once, in any language
+
+Applicants read the bot in Uzbek, Russian or English, whichever they picked at
+`/start`. The message around the reason has always matched that choice; the
+reason in column `N` is a tutor's own words, so the bot machine-translates it to
+match and sends **the tutor's exact wording underneath the translation**. Nobody
+has to write anything three times, and no applicant is left reading only a
+machine's version of why they were turned down.
+
+Tutors write in whatever language suits them. An applicant who chose the same
+language sees the text untouched, with no second copy.
+
+The translation runs on the **Gemini API**, which needs one free key and no
+credit card:
+
+1. Sign in at [aistudio.google.com/apikey](https://aistudio.google.com/apikey) and
+   create an API key.
+2. Add it to `.env` as `GEMINI_API_KEY=...`.
+3. Restart the bot.
+
+> **Do not enable billing on the Google project that key belongs to.** Turning
+> billing on deletes that project's Gemini free tier, after which every call bills
+> from the first token. This is also why the bot does **not** use Google's Cloud
+> Translation API: that one requires a billing account even to spend its free
+> allowance.
+
+The free tier allows 15 requests a minute and 1,500 a day, and the bot caches by
+text — tutors reuse the same wording across many rows, so a few hundred applicants
+usually amount to a few dozen calls. Calls are spaced four seconds apart so a
+large first batch cannot burn the per-minute allowance at once. Google has cut
+free-tier limits before without notice; if that ever bites, the consequence is
+untranslated reasons, never a missed result.
+
+`GEMINI_MODEL` (default `gemini-2.0-flash`) picks the model, should a future one
+have better limits.
+
+With no key set — or if the key is rejected, the quota is spent, or the network
+fails — the bot logs it once and sends every reason in the tutor's own language,
+exactly how it behaved before. Nothing breaks and no result is delayed. To turn
+the feature off deliberately, set `TRANSLATE_REASONS=0` in `.env`.
 
 ## Local state files
 
@@ -161,6 +205,16 @@ sudo /opt/ttpu-dor/.venv/bin/pip install -r requirements.txt   # only if deps ch
 sudo systemctl restart ttpu-bot
 ```
 
+If the update adds a setting, `.env` will **not** bring it with it — that file is
+gitignored and only ever exists on the machine it is on. Edit the server's own
+copy before restarting, and keep it mode 600:
+
+```bash
+sudo -u ttpu nano /opt/ttpu-dor/.env
+sudo systemctl restart ttpu-bot
+journalctl -u ttpu-bot -n 30      # confirm the new setting was picked up
+```
+
 Restarting drops any updates queued while the bot was down and clears in-progress
 application forms — the FSM is in-memory. Prefer restarting at a quiet hour.
 
@@ -173,3 +227,5 @@ application forms — the FSM is in-memory. Prefer restarting at a quiet hour.
 | `Could not obtain Google Services` | `credentials.json` missing/unreadable, or the service account lost sheet access |
 | Rows append but stay unformatted | the service account needs **Editor**, not Viewer, on the spreadsheet |
 | Applications get ids that already exist | counter sync failed at startup — check the log for `Failed to read the highest application id` |
+| `GEMINI_API_KEY is not set` | no key in `.env` — reasons still go out, in the tutors' own language |
+| `Gemini rejected our key` | wrong or revoked key, or billing was enabled on its project (which deletes the free tier) — reasons still go out, untranslated |

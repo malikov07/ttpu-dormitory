@@ -32,6 +32,24 @@ RESULT_POLL_SECONDS = int(os.getenv("RESULT_POLL_SECONDS", "120"))
 # restarts the clock, so tutors can take as long as they like over the wording.
 RESULT_QUIET_SECONDS = int(os.getenv("RESULT_QUIET_SECONDS", "600"))
 
+# Machine-translate the reason tutors write into each applicant's own language,
+# with the tutor's original sent underneath it. Set to 0 to send the reason
+# exactly as typed. On by default: the bot degrades to the original text on its
+# own if the Translation API is not reachable.
+TRANSLATE_REASONS = os.getenv("TRANSLATE_REASONS", "1").strip().lower() not in (
+    "0",
+    "false",
+    "no",
+    "off",
+)
+
+# Free Gemini key from https://aistudio.google.com/apikey — no card, no billing
+# account. Leave it empty and reasons simply go out as the tutors typed them.
+# Never enable billing on the Google project this key belongs to: that deletes
+# its free tier and every call starts billing from the first token.
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash").strip()
+
 
 def is_admin(user_id: int) -> bool:
     """Return True if the given Telegram user id is an admin."""

@@ -198,6 +198,11 @@ TEXTS = {
             "❌ Afsuski, arizangiz <b>rad etildi.</b>\n\n"
             "💬 <b>Sabab:</b>\n{reason}\n"
         ),
+        # Appended to a reason that was machine-translated, so the applicant can
+        # always read what the tutors actually wrote.
+        "reason_original": (
+            "\n\n🖊 <i>Ishchi guruh yozgan asl matn:</i>\n<i>{original}</i>"
+        ),
         # Channel (always sent in Uzbek)
         "channel_caption": (
             "📋 <b>YANGI ARIZA #{id}</b>\n"
@@ -440,6 +445,9 @@ TEXTS = {
             "💬 <b>Reason:</b>\n{reason}\n\n"
             "🙏 Thank you for your application. We will get in touch if a place opens up."
         ),
+        "reason_original": (
+            "\n\n🖊 <i>Original wording from the committee:</i>\n<i>{original}</i>"
+        ),
         "channel_caption": (
             "📋 <b>NEW APPLICATION #{id}</b>\n"
             "━━━━━━━━━━━━━━━━━━━━\n"
@@ -678,6 +686,9 @@ TEXTS = {
             "К сожалению, в этот раз вы <b>не приняты</b> в общежитие.\n\n"
             "💬 <b>Причина:</b>\n{reason}\n\n"
             "🙏 Спасибо за вашу заявку. Мы свяжемся с вами, если появится место."
+        ),
+        "reason_original": (
+            "\n\n🖊 <i>Оригинал, как написала комиссия:</i>\n<i>{original}</i>"
         ),
         "channel_caption": (
             "📋 <b>НОВАЯ ЗАЯВКА #{id}</b>\n"
