@@ -71,7 +71,7 @@ bot checks every two minutes and messages each applicant on its own.
 |---|---|---|
 | `M` — Status | tutors | `2` accepted · `1` invited to an interview · `0` not accepted |
 | `N` — Reason | tutors | free text the applicant reads word for word. **Required for 2 and 0**, optional for 1 |
-| `O` — Sent | the bot | `✅ <date time>` when delivered, or why it could not be |
+| `O` — Sent | the bot | `✅ <date time>` when delivered, `🔄 <date time>` when a later edit was delivered, or why it could not be |
 
 A row only goes out once M is filled **and** nothing has changed for ten minutes.
 That delay is the whole point: tutors type the reason straight into the cell,
@@ -89,18 +89,28 @@ before there is a date to give them. A row marked `1` with N empty is sent as
 When the date is settled, the tutor writes it into `N` — the date and anything
 else the applicant should know, in their own words. After the same ten quiet
 minutes the bot delivers that text as a **second, separate message** and appends
-`📅 <date time>` to column O. This happens once per row; editing N after those
-details have gone out is treated as any other late edit.
+`📅 <date time>` to column O.
 
 Filling M and N together still sends a single message with the reason in it, so
 nothing changes for tutors who already know the date.
 
-Apart from that follow-up, each applicant is messaged exactly once. Editing a row
-afterwards does **not** re-send it; the bot notes `✏️ keyin tahrirlandi` in column
-O and leaves it to a human. To actually send a corrected result, an admin runs
-`/resend <application id>`. Blank status means "not reviewed yet" — leaving M
-empty never sends a rejection, and anything other than 0/1/2 in M is ignored with
-a warning in the log.
+### Changing your mind is allowed
+
+Edit `M` or `N` on a row that has already gone out and the applicant is told
+again, ten quiet minutes later, in a message headed "your result has been
+updated" so they know which answer is the current one. The bot appends
+`🔄 <date time>` to column O, keeping the whole history of what that applicant
+was told and when. A change to `M` sends the new decision; a corrected interview
+date is sent the way it was sent the first time.
+
+Nothing goes out for an edit that is taken back within those ten minutes — the
+applicant is already holding that text. Emptying `N` on an accepted or rejected
+row sends nothing either; the bot waits for the replacement wording. To send a
+result again **unchanged** — to someone who deleted the message, say — an admin
+still runs `/resend <application id>`.
+
+Blank status means "not reviewed yet" — leaving M empty never sends a rejection,
+and anything other than 0/1/2 in M is ignored with a warning in the log.
 
 Every timestamp the bot writes — column O, the log, its state files — is Tashkent
 time (UTC+5), whatever the server's own clock is set to.

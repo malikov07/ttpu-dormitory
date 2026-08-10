@@ -63,11 +63,13 @@ async def handle_allow_reapply(
 
 @router.message(Command("resend"))
 async def handle_resend(message: Message, state: FSMContext, command: CommandObject) -> None:
-    """Admin: send an applicant their result again, e.g. after a corrected reason.
+    """Admin: send an applicant their result again, word for word.
 
-    A result is delivered once and only once on its own; this re-arms a single
-    application id. The current text still has to settle before it goes out, so a
-    correction being typed right now is not what gets sent.
+    A corrected status or reason reaches the applicant on its own, so this is for
+    sending text that has not changed — to someone who deleted the message, or
+    blocked the bot and has since unblocked it. The current text still has to
+    settle before it goes out, so a correction being typed right now is not what
+    gets sent.
     """
     lang = await _get_lang(state)
     if not is_admin(message.from_user.id):
@@ -122,6 +124,7 @@ async def handle_publish_confirm(callback: CallbackQuery, state: FSMContext, bot
             interview=counts["interview"],
             rejected=counts["rejected"],
             details=counts["details"],
+            updated=counts["updated"],
             failed=counts["failed"],
             waiting=counts["waiting"],
             no_details=counts["no_details"],

@@ -146,6 +146,7 @@ TEXTS = {
             "🗣 Suhbatga taklif (1): <b>{interview}</b>\n"
             "❌ Rad etildi (0): <b>{rejected}</b>\n"
             "📅 Suhbat ma'lumoti yuborildi: <b>{details}</b>\n"
+            "🔄 Yangilangan natija yuborildi: <b>{updated}</b>\n"
             "⚠️ Yuborilmadi: <b>{failed}</b>\n\n"
             "⏳ Matn hali o‘zgarib turibdi: <b>{waiting}</b>\n"
             "📝 Suhbat izohi kutilmoqda (N bo‘sh): <b>{no_details}</b>\n"
@@ -202,6 +203,13 @@ TEXTS = {
         # always read what the tutors actually wrote.
         "reason_original": (
             "\n\n🖊 <i>Ishchi guruh yozgan asl matn:</i>\n<i>{original}</i>"
+        ),
+        # Put in front of any result that is being sent a second time, because the
+        # tutors changed the decision or the reason. Without it the applicant is
+        # left holding two different answers with no way to tell which is current.
+        "result_updated": (
+            "🔄 <b>Natijangiz yangilandi.</b>\n"
+            "<i>Quyidagi xabar avvalgisining o‘rniga keladi.</i>\n\n"
         ),
         # Channel (always sent in Uzbek)
         "channel_caption": (
@@ -394,6 +402,7 @@ TEXTS = {
             "🗣 Invited to an interview (1): <b>{interview}</b>\n"
             "❌ Rejected (0): <b>{rejected}</b>\n"
             "📅 Interview details sent: <b>{details}</b>\n"
+            "🔄 Updated results sent: <b>{updated}</b>\n"
             "⚠️ Failed to deliver: <b>{failed}</b>\n\n"
             "⏳ Text still being edited: <b>{waiting}</b>\n"
             "📝 Waiting for interview details (N empty): <b>{no_details}</b>\n"
@@ -447,6 +456,10 @@ TEXTS = {
         ),
         "reason_original": (
             "\n\n🖊 <i>Original wording from the committee:</i>\n<i>{original}</i>"
+        ),
+        "result_updated": (
+            "🔄 <b>Your result has been updated.</b>\n"
+            "<i>The message below replaces the one you received earlier.</i>\n\n"
         ),
         "channel_caption": (
             "📋 <b>NEW APPLICATION #{id}</b>\n"
@@ -636,6 +649,7 @@ TEXTS = {
             "🗣 На собеседование (1): <b>{interview}</b>\n"
             "❌ Отклонены (0): <b>{rejected}</b>\n"
             "📅 Отправлена информация о собеседовании: <b>{details}</b>\n"
+            "🔄 Отправлено обновлённых результатов: <b>{updated}</b>\n"
             "⚠️ Не доставлено: <b>{failed}</b>\n\n"
             "⏳ Текст ещё редактируется: <b>{waiting}</b>\n"
             "📝 Ждём информацию о собеседовании (N пуст): <b>{no_details}</b>\n"
@@ -689,6 +703,10 @@ TEXTS = {
         ),
         "reason_original": (
             "\n\n🖊 <i>Оригинал, как написала комиссия:</i>\n<i>{original}</i>"
+        ),
+        "result_updated": (
+            "🔄 <b>Ваш результат обновлён.</b>\n"
+            "<i>Сообщение ниже заменяет предыдущее.</i>\n\n"
         ),
         "channel_caption": (
             "📋 <b>НОВАЯ ЗАЯВКА #{id}</b>\n"

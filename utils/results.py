@@ -10,8 +10,12 @@ Status 0 and 2 are final and always need a reason. Status 1 does not: tutors mar
 a row 1 as soon as they decide to interview someone, long before there is a date
 to give them. Such a row goes out straight away as "you are invited, details to
 follow", and when the tutor later fills N in with the date and whatever else the
-applicant needs to know, that text is delivered as a second message. Only one
-such follow-up is sent per row; anything edited after it is left to a human.
+applicant needs to know, that text is delivered as a second message.
+
+Tutors also change their minds and correct themselves. Whenever M or N differs
+from what the applicant was last told, the row is delivered again as a fresh
+message marked as an update, so what the applicant has read always matches what
+the sheet says.
 
 A background watcher (see `results_watcher`) polls the sheet, so each applicant
 hears back as soon as their own row is finished instead of waiting for a batch.
@@ -20,8 +24,10 @@ The detail that shapes this module: tutors type the reason straight into the cel
 and Sheets saves every keystroke, so a poll that lands mid-sentence would ship
 half a thought to a student — and a sent Telegram message cannot be recalled. A
 row is therefore only delivered once its status and reason have stayed identical
-for QUIET_SECONDS. Any edit restarts that timer, and the follow-up message waits
-out the same quiet period on its own.
+for QUIET_SECONDS. Any edit restarts that timer, and that is also what makes
+re-sending on every edit bearable: rewording a sentence costs the applicant one
+message rather than ten, and an edit taken back within the quiet period costs
+them nothing at all.
 """
 
 import asyncio
@@ -82,6 +88,19 @@ _bad_status_seen: set = set()
 
 
 # ---------------------------------------------------------------- local state
+#
+# One record per application id. The two fingerprints are what keep re-sending
+# under control:
+#
+#     fingerprint       the status+reason last seen in the sheet, with `since`
+#                       marking when it appeared — the quiet period runs on it
+#     sent_fingerprint  the status+reason the applicant has actually been told
+#
+# They differ only while a tutor's edit is settling. A row is sent when the two
+# disagree, which means an edit taken back before the quiet period is over is
+# never sent — the applicant is already holding that text. Records written before
+# re-sending existed have no `sent_fingerprint` and are backfilled on sight; see
+# `deliver_ready_results`.
 
 def _load_state() -> dict:
     """Read the per-applicant delivery record. A missing/corrupt file is empty."""
@@ -200,12 +219,18 @@ def _write_sent_column_sync(sheets_service, stamps: list) -> None:
 
 # ---------------------------------------------------------------- delivery
 
-async def _render(text_key: str, telegram_id: int, reason: str) -> str:
+async def _render(
+    text_key: str, telegram_id: int, reason: str, updated: bool = False
+) -> str:
     """Build one message in the applicant's own language.
 
     The template comes from texts.py; the reason is a tutor's free text, so it is
     machine-translated to match. The tutor's exact words follow underneath —
     see utils/translate.py for why a translation never travels alone.
+
+    `updated` puts a line on top saying this replaces what was sent before. An
+    applicant who has already been told they were accepted must not be left
+    guessing which of two contradictory messages is the current one.
 
     quote=False on purpose: messages go out as HTML, where only & < > need
     escaping. Escaping quotes too would turn every Uzbek o' and g' in the reason
@@ -220,7 +245,8 @@ async def _render(text_key: str, telegram_id: int, reason: str) -> str:
     if translated:
         block += t("reason_original", lang, original=html.escape(reason, quote=False))
 
-    return t(text_key, lang, reason=block)
+    text = t(text_key, lang, reason=block)
+    return t("result_updated", lang) + text if updated else text
 
 
 async def _try_send(bot: Bot, telegram_id: int, text: str) -> tuple:
@@ -245,16 +271,18 @@ async def deliver_ready_results(bot: Bot) -> dict:
     """Send results for every row that is decided, explained and settled.
 
     Returns counts: accepted / interview / rejected (delivered now), details
-    (interview rows whose date and instructions went out as a follow-up), failed
-    (delivery gave up), waiting (still inside the quiet period), no_details
-    (invited to an interview, N still empty), pending (status or reason missing)
-    and undecided (tutors have not touched the row).
+    (interview rows whose date and instructions went out as a follow-up), updated
+    (a decision or reason changed after the applicant was told, and the new one
+    went out), failed (delivery gave up), waiting (still inside the quiet period),
+    no_details (invited to an interview, N still empty), pending (status or reason
+    missing) and undecided (tutors have not touched the row).
     """
     counts = {
         "accepted": 0,
         "interview": 0,
         "rejected": 0,
         "details": 0,
+        "updated": 0,
         "failed": 0,
         "waiting": 0,
         "no_details": 0,
@@ -285,112 +313,101 @@ async def deliver_ready_results(bot: Bot) -> dict:
             record = state.get(key, {})
             status, reason = row["status"], row["reason"]
 
-            if record.get("done"):
-                if record.get("awaiting_details") and status == "1":
-                    # Invited to an interview earlier with nothing to say yet.
-                    # The moment N holds settled text, it goes out on its own.
-                    if not reason:
-                        counts["no_details"] += 1
-                        continue
+            if record.get("done") and "sent_fingerprint" not in record:
+                # Written before re-sending existed: one fingerprint, and it was
+                # the text the applicant was sent. Backfilled here, before the
+                # code below has a chance to move `fingerprint` on to an edit —
+                # get this wrong and everyone hears their result a second time.
+                record["sent_fingerprint"] = record.get("fingerprint", "")
+                record.pop("edited", None)  # the flag that stood in for this
+                state[key] = record
+                dirty = True
 
-                    fingerprint = f"{status}\x1f{reason}"
-                    if record.get("details_fingerprint") != fingerprint:
-                        record.update(
-                            details_fingerprint=fingerprint, details_since=now
-                        )
-                        state[key] = record
-                        dirty = True
-                        counts["waiting"] += 1
-                        continue
+            if record.get("done") and record.get("awaiting_details") and status == "1":
+                # Invited to an interview earlier with nothing to say yet.
+                # The moment N holds settled text, it goes out on its own.
+                if not reason:
+                    counts["no_details"] += 1
+                    continue
 
-                    if now - record.get("details_since", now) < RESULT_QUIET_SECONDS:
-                        counts["waiting"] += 1
-                        continue
+                fingerprint = f"{status}\x1f{reason}"
+                if record.get("details_fingerprint") != fingerprint:
+                    record.update(details_fingerprint=fingerprint, details_since=now)
+                    state[key] = record
+                    dirty = True
+                    counts["waiting"] += 1
+                    continue
 
-                    outcome, detail = await _try_send(
-                        bot,
-                        row["telegram_id"],
-                        await _render(INTERVIEW_DETAILS, row["telegram_id"], reason),
+                if now - record.get("details_since", now) < RESULT_QUIET_SECONDS:
+                    counts["waiting"] += 1
+                    continue
+
+                outcome, detail = await _try_send(
+                    bot,
+                    row["telegram_id"],
+                    await _render(INTERVIEW_DETAILS, row["telegram_id"], reason),
+                )
+                if outcome == "flood":
+                    logger.warning(
+                        "Telegram asked us to slow down (%ss) — pausing.", detail
                     )
-                    if outcome == "flood":
-                        logger.warning(
-                            "Telegram asked us to slow down (%ss) — pausing.", detail
-                        )
-                        break
-                    if outcome == "error":
-                        attempts = record.get("details_attempts", 0) + 1
-                        record["details_attempts"] = attempts
-                        if attempts >= MAX_ATTEMPTS:
-                            record.update(awaiting_details=False, error=detail)
-                            counts["failed"] += 1
-                            stamps.append(
-                                (
-                                    row["row_number"],
-                                    f"{row['sent_cell']} ❌ suhbat ma'lumoti yuborilmadi: {detail}"[:200],
-                                )
-                            )
-                            logger.error(
-                                "Giving up on the interview details for %s after %d attempts: %s",
-                                key, attempts, detail,
-                            )
-                        else:
-                            logger.warning(
-                                "Interview details for %s failed (attempt %d): %s",
-                                key, attempts, detail,
-                            )
-                        state[key] = record
-                        dirty = True
-                        continue
-                    if outcome == "blocked":
-                        logger.warning("Cannot reach applicant %s: %s", key, detail)
+                    break
+                if outcome == "error":
+                    attempts = record.get("details_attempts", 0) + 1
+                    record["details_attempts"] = attempts
+                    if attempts >= MAX_ATTEMPTS:
                         record.update(awaiting_details=False, error=detail)
-                        state[key] = record
-                        dirty = True
                         counts["failed"] += 1
                         stamps.append(
                             (
                                 row["row_number"],
-                                f"{row['sent_cell']} ❌ suhbat ma'lumoti yuborilmadi: bot bloklangan",
+                                f"{row['sent_cell']} ❌ suhbat ma'lumoti yuborilmadi: {detail}"[:200],
                             )
                         )
-                        continue
-
-                    # Sent. Adopt the full text as the row's fingerprint so the
-                    # edit warning below only fires on a genuinely new edit.
-                    record.update(
-                        awaiting_details=False,
-                        fingerprint=fingerprint,
-                        details_sent_at=now_tashkent().isoformat(timespec="seconds"),
-                    )
+                        logger.error(
+                            "Giving up on the interview details for %s after %d attempts: %s",
+                            key, attempts, detail,
+                        )
+                    else:
+                        logger.warning(
+                            "Interview details for %s failed (attempt %d): %s",
+                            key, attempts, detail,
+                        )
                     state[key] = record
-                    dirty = not _persist(state)
-                    counts["details"] += 1
+                    dirty = True
+                    continue
+                if outcome == "blocked":
+                    logger.warning("Cannot reach applicant %s: %s", key, detail)
+                    record.update(awaiting_details=False, error=detail)
+                    state[key] = record
+                    dirty = True
+                    counts["failed"] += 1
                     stamps.append(
                         (
                             row["row_number"],
-                            f"{row['sent_cell']} 📅 {now_tashkent():%Y-%m-%d %H:%M}",
+                            f"{row['sent_cell']} ❌ suhbat ma'lumoti yuborilmadi: bot bloklangan",
                         )
                     )
-                    await asyncio.sleep(0.05)
                     continue
 
-                # Already delivered (or given up on). If a tutor edits the row
-                # afterwards it is not re-sent on its own — say so once, in the
-                # log and in the sheet, and leave the decision to a human.
-                if status and record.get("fingerprint") != f"{status}\x1f{reason}":
-                    if not record.get("edited"):
-                        logger.warning(
-                            "Application %s was edited after its result was sent — "
-                            "not re-sending. Use /resend %s to send the new text.",
-                            key,
-                            key,
-                        )
-                        record["edited"] = True
-                        state[key] = record
-                        dirty = True
-                        stamps.append(
-                            (row["row_number"], f"{row['sent_cell']} ✏️ keyin tahrirlandi")
-                        )
+                # Sent. This text is now what the applicant holds, so a further
+                # edit is an update and goes out through the path below.
+                record.update(
+                    awaiting_details=False,
+                    fingerprint=fingerprint,
+                    sent_fingerprint=fingerprint,
+                    details_sent_at=now_tashkent().isoformat(timespec="seconds"),
+                )
+                state[key] = record
+                dirty = not _persist(state)
+                counts["details"] += 1
+                stamps.append(
+                    (
+                        row["row_number"],
+                        f"{row['sent_cell']} 📅 {now_tashkent():%Y-%m-%d %H:%M}",
+                    )
+                )
+                await asyncio.sleep(0.05)
                 continue
 
             if status is None and row["status_raw"]:
@@ -405,18 +422,29 @@ async def deliver_ready_results(bot: Bot) -> dict:
             if status is None or (status != "1" and not reason):
                 # Half-filled: an accepted/rejected row without its explanation,
                 # or the reason typed before the status. Wait for the tutor to
-                # finish. Status 1 is exempt — an invitation is worth sending
-                # before anyone knows the interview date.
+                # finish — including when the row has been delivered already and
+                # a tutor has just cleared the cell to rewrite it. Status 1 is
+                # exempt: an invitation is worth sending before anyone knows the
+                # interview date.
                 counts["pending"] += 1
                 continue
 
             fingerprint = f"{status}\x1f{reason}"
             if record.get("fingerprint") != fingerprint:
                 # First sight of this text, or the tutor is still editing —
-                # restart the quiet period.
-                state[key] = {"fingerprint": fingerprint, "since": now}
+                # restart the quiet period. Whatever the row was worth before,
+                # the attempt count belongs to the text that failed, not this one.
+                record.update(fingerprint=fingerprint, since=now, attempts=0)
+                state[key] = record
                 dirty = True
                 counts["waiting"] += 1
+                continue
+
+            update = bool(record.get("done"))
+            if update and record.get("sent_fingerprint") == fingerprint:
+                # Delivered, and the sheet still says what the applicant was told.
+                # An edit taken back before it settled lands here too, and rightly
+                # sends nothing.
                 continue
 
             if now - record.get("since", now) < RESULT_QUIET_SECONDS:
@@ -424,15 +452,31 @@ async def deliver_ready_results(bot: Bot) -> dict:
                 continue
 
             awaiting_details = status == "1" and not reason
+            # An interview whose details already went out as a message of their
+            # own, and the tutor has since edited them — the date has moved, say.
+            # Correct it the way it was sent, rather than repeating the invitation.
+            details_changed = (
+                update
+                and status == "1" == record.get("status")
+                and bool(record.get("details_sent_at"))
+            )
+
+            text_key, counter = STATUS_TEXTS[status]
             if awaiting_details:
-                text_key, counter = INTERVIEW_NO_REASON, "interview"
-            else:
-                text_key, counter = STATUS_TEXTS[status]
+                text_key = INTERVIEW_NO_REASON
+            elif details_changed:
+                text_key = INTERVIEW_DETAILS
+            if update:
+                counter = "updated"
+
+            # An update writes its note after the earlier one, so column O keeps
+            # the whole history of what an applicant was told and when.
+            note = f"{row['sent_cell']} " if update else ""
 
             outcome, detail = await _try_send(
                 bot,
                 row["telegram_id"],
-                await _render(text_key, row["telegram_id"], reason),
+                await _render(text_key, row["telegram_id"], reason, updated=update),
             )
             if outcome == "flood":
                 # Stop this pass; the watcher picks the rest up.
@@ -441,19 +485,26 @@ async def deliver_ready_results(bot: Bot) -> dict:
             if outcome == "blocked":
                 # Blocked the bot, or never started it — retrying cannot help.
                 logger.warning("Cannot reach applicant %s: %s", key, detail)
-                record.update(fingerprint=fingerprint, done=True, error=detail)
+                record.update(
+                    fingerprint=fingerprint,
+                    sent_fingerprint=fingerprint,
+                    done=True,
+                    error=detail,
+                )
                 state[key] = record
                 dirty = True
                 counts["failed"] += 1
-                stamps.append((row["row_number"], "❌ yuborilmadi: bot bloklangan"))
+                stamps.append((row["row_number"], f"{note}❌ yuborilmadi: bot bloklangan"))
                 continue
             if outcome == "error":
                 attempts = record.get("attempts", 0) + 1
                 record.update(fingerprint=fingerprint, attempts=attempts)
                 if attempts >= MAX_ATTEMPTS:
-                    record.update(done=True, error=detail)
+                    record.update(sent_fingerprint=fingerprint, done=True, error=detail)
                     counts["failed"] += 1
-                    stamps.append((row["row_number"], f"❌ yuborilmadi: {detail}"[:200]))
+                    stamps.append(
+                        (row["row_number"], f"{note}❌ yuborilmadi: {detail}"[:200])
+                    )
                     logger.error(
                         "Giving up on applicant %s after %d attempts: %s",
                         key, attempts, detail,
@@ -469,17 +520,32 @@ async def deliver_ready_results(bot: Bot) -> dict:
 
             record.update(
                 fingerprint=fingerprint,
+                sent_fingerprint=fingerprint,
                 done=True,
                 sent_at=now_tashkent().isoformat(timespec="seconds"),
                 status=status,
                 awaiting_details=awaiting_details,
             )
+            record.pop("error", None)
+            if awaiting_details:
+                # Waiting on a date again, after a tutor took the reason back out.
+                # The old follow-up timer must not carry over, or a reason retyped
+                # word for word would go out without its quiet period.
+                for stale in ("details_fingerprint", "details_since",
+                              "details_attempts", "details_sent_at"):
+                    record.pop(stale, None)
             state[key] = record
             # Written now rather than at the end of the pass: if the bot dies here,
             # everyone already messaged would otherwise be messaged again on restart.
             dirty = not _persist(state)
             counts[counter] += 1
-            stamp = f"✅ {now_tashkent():%Y-%m-%d %H:%M}"
+            if update:
+                logger.info(
+                    "Application %s changed after its result was sent — the new "
+                    "result has gone out.", key,
+                )
+            mark = f"{note}🔄" if update else "✅"
+            stamp = f"{mark} {now_tashkent():%Y-%m-%d %H:%M}"
             if awaiting_details:
                 stamp += " (suhbat ma'lumoti kutilmoqda)"
             stamps.append((row["row_number"], stamp))
@@ -505,16 +571,17 @@ async def deliver_ready_results(bot: Bot) -> dict:
                 logger.error(f"Results were sent but column O could not be updated: {e}")
 
     delivered = counts["accepted"] + counts["interview"] + counts["rejected"]
-    if delivered or counts["details"] or counts["failed"]:
+    if delivered or counts["details"] or counts["updated"] or counts["failed"]:
         logger.info(
             "Results delivered: %d (accepted %d, interview %d, rejected %d), "
-            "interview details %d, failed %d, waiting %d, awaiting details %d, "
-            "incomplete %d.",
+            "interview details %d, updated %d, failed %d, waiting %d, "
+            "awaiting details %d, incomplete %d.",
             delivered,
             counts["accepted"],
             counts["interview"],
             counts["rejected"],
             counts["details"],
+            counts["updated"],
             counts["failed"],
             counts["waiting"],
             counts["no_details"],
