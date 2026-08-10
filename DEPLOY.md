@@ -158,11 +158,12 @@ Four JSON files hold state that is **not** in git and **not** in the spreadsheet
 | `applied_users.json` | who already applied | rebuilt from sheet column L at startup |
 | `app_counter.json` | last issued application id | re-seeded from sheet column A at startup |
 | `results_state.json` | who has already been told their result | **applicants may be messaged twice** — see below |
-| `user_langs.json` | each applicant's chosen language | **gone for good** — results then go out in Uzbek |
+| `user_langs.json` | each applicant's chosen language | rebuildable from the channel — see "Recovering the languages" |
 
 The first two self-heal, which is why a lost server no longer breaks the id
-sequence. The other two cannot be rebuilt from the sheet. The language is simply
-never written there. `results_state.json` is the record of who has been told their
+sequence. Neither of the other two can be rebuilt from the *sheet* — every choice
+is normalised to Uzbek before it is written there, and the language is not
+written at all. `results_state.json` is the record of who has been told their
 result: lose it and every decided row is treated as new, so applicants are
 messaged a second time. Back both up:
 
@@ -185,6 +186,33 @@ records what was sent.
 
 Copy those backups off the server periodically — a backup that only exists on the
 machine you might lose is not a backup.
+
+### Recovering the languages
+
+If `user_langs.json` is lost anyway, the applications channel can rebuild it. The
+caption there is filled from the values the applicant chose — `faculty_name`,
+`region_name`, `town_name`, `reason_name` — and only the *labels* are forced to
+Uzbek. So a post reading `Yo'nalish: Инженерия кибербезопасности` was written by
+someone using the bot in Russian.
+
+Every one of those values came out of the tables in `data/regions.py`, which hold
+all three translations, so recovery is an exact lookup rather than language
+guessing. Where a value is spelled the same in two languages the other fields
+settle it.
+
+The bot cannot read channel history — the Bot API has no method for it — so the
+input is an export from **Telegram Desktop**: open the channel → ⋮ → *Export chat
+history* → untick photos and files → format **JSON** → Export.
+
+```bash
+python tools/recover_langs.py ChatExport_.../result.json            # report only
+python tools/recover_langs.py ChatExport_.../result.json --write    # save it
+```
+
+It reports how each language was decided and keeps any entries already in
+`user_langs.json` (pass `--overwrite` to replace them). The previous file is
+copied to `user_langs.json.bak` before anything is written. Applicants it cannot
+decide keep the Uzbek default, exactly as before.
 
 ## Routine operations
 
