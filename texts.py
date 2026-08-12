@@ -132,12 +132,13 @@ TEXTS = {
             "nusxa qabul qilinmaydi.\n\n"
             "📎 Hujjatni <b>fayl</b> (PDF, Word) koʻrinishida yuborish tavsiya etiladi — "
             "rasm siqilganda QR-kod oʻqilmay qolishi mumkin.\n\n"
-            "Bir nechta fayl yuborishingiz mumkin. Tugatgach «{send}» tugmasini bosing."
+            "Bir nechta fayl yuborishingiz mumkin. Hammasini yuborib boʻlgach "
+            "«{send}» tugmasini bosing."
         ),
         "reupload_added": "✅ {count}-fayl qabul qilindi.",
         "reupload_invalid": (
             "⚠️ Iltimos, rasm yoki hujjat fayli (PDF, Word) yuboring.\n"
-            "Tugatgach «{send}» tugmasini bosing."
+            "Yuborib boʻlgach «{send}» tugmasini bosing."
         ),
         "reupload_empty": "⚠️ Avval hujjatni yuboring, soʻngra «{send}» tugmasini bosing.",
         "reupload_limit": (
@@ -151,7 +152,7 @@ TEXTS = {
             "📎 Yuborilgan fayllar: <b>{count}</b> ta\n"
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🕓 Ishchi guruh hujjatni koʻrib chiqadi. Natija shu bot orqali yuboriladi.\n"
-            "📄 Yana hujjat yuborish kerak boʻlsa, shu tugmani qayta bosing."
+            "📄 Yana hujjat yuborish kerak boʻlsa, «{button}» tugmasini qayta bosing."
         ),
         "reupload_cancelled": (
             "❌ Hujjat yuborish bekor qilindi. Arizangiz oʻzgarishsiz qoldi."
@@ -169,7 +170,9 @@ TEXTS = {
             "❌ Hujjatni yuborishda xatolik yuz berdi. "
             "Iltimos, qaytadan urinib koʻring."
         ),
-        "btn_reupload_send": "✅ Hujjatni yuborish",
+        # Not "send": by the time it is pressed the files are already in the chat,
+        # so what the applicant is saying is that there are no more coming.
+        "btn_reupload_send": "✅ Tugadi",
         # Admin / results
         "btn_publish_results": "📣 Tayyor natijalarni yuborish",
         "publish_prompt": (
@@ -453,12 +456,12 @@ TEXTS = {
             "not accepted.\n\n"
             "📎 Please send it as a <b>file</b> (PDF, Word) — a compressed photo can "
             "leave the QR code unreadable.\n\n"
-            "You may send several files. Press «{send}» when you are done."
+            "You may send several files. Press «{send}» once they are all attached."
         ),
         "reupload_added": "✅ File {count} received.",
         "reupload_invalid": (
             "⚠️ Please send a photo or a document file (PDF, Word).\n"
-            "Press «{send}» when you are done."
+            "Press «{send}» once they are all attached."
         ),
         "reupload_empty": "⚠️ Send the document first, then press «{send}».",
         "reupload_limit": (
@@ -472,7 +475,7 @@ TEXTS = {
             "📎 Files sent: <b>{count}</b>\n"
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🕓 The working group will review it. The result will be sent through this bot.\n"
-            "📄 Need to send another document? Press the same button again."
+            "📄 Need to send another document? Press «{button}» again."
         ),
         "reupload_cancelled": (
             "❌ Sending cancelled. Your application is unchanged."
@@ -489,7 +492,7 @@ TEXTS = {
         "reupload_error": (
             "❌ Something went wrong while sending your document. Please try again."
         ),
-        "btn_reupload_send": "✅ Send document",
+        "btn_reupload_send": "✅ Done",
         # Admin / results
         "btn_publish_results": "📣 Send finished results",
         "publish_prompt": (
@@ -767,7 +770,7 @@ TEXTS = {
             "📎 Отправлено файлов: <b>{count}</b>\n"
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🕓 Рабочая группа рассмотрит документ. Результат придёт через этого бота.\n"
-            "📄 Нужно отправить ещё документ? Нажмите ту же кнопку снова."
+            "📄 Нужно отправить ещё документ? Нажмите «{button}» снова."
         ),
         "reupload_cancelled": (
             "❌ Отправка отменена. Ваша заявка осталась без изменений."
@@ -784,7 +787,7 @@ TEXTS = {
         "reupload_error": (
             "❌ Произошла ошибка при отправке документа. Пожалуйста, попробуйте снова."
         ),
-        "btn_reupload_send": "✅ Отправить документ",
+        "btn_reupload_send": "✅ Готово",
         # Admin / results
         "btn_publish_results": "📣 Отправить готовые результаты",
         "publish_prompt": (

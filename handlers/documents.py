@@ -216,7 +216,13 @@ async def send_documents(message: Message, state: FSMContext, bot: Bot) -> None:
         message,
         state,
         lang,
-        t("reupload_sent", lang, id=_esc(app_id), count=len(files)),
+        t(
+            "reupload_sent",
+            lang,
+            id=_esc(app_id),
+            count=len(files),
+            button=t("btn_reupload_doc", lang),
+        ),
     )
 
 
