@@ -266,12 +266,49 @@ journalctl -u ttpu-bot -n 100         # recent logs
 journalctl -u ttpu-bot -f             # follow live
 ```
 
-Deploying an update:
+Deploying an update. The server takes its code from GitHub, so a change has to be
+committed and pushed before it can be pulled — nothing is copied straight from
+your machine.
+
+**1. On your machine** (PowerShell, in the project folder):
+
+```powershell
+git status                       # what you changed
+git add -A                       # or name the files: git add bot.py texts.py
+git commit -m "what changed"
+git push origin main
+```
+
+`git add -A` is safe: `.env`, `credentials.json`, the generated `suhbat_*.docx`
+rosters and the local JSON state files are all gitignored.
+
+**2. On the server:**
 
 ```bash
 cd /opt/ttpu-dor
 sudo -u ttpu git pull
 sudo /opt/ttpu-dor/.venv/bin/pip install -r requirements.txt   # only if deps changed
+sudo systemctl restart ttpu-bot
+journalctl -u ttpu-bot -n 30                                   # did it come back up?
+```
+
+Or the whole server half from your own terminal, without logging in:
+
+```powershell
+ssh user@server "cd /opt/ttpu-dor && sudo -u ttpu git pull && sudo systemctl restart ttpu-bot"
+```
+
+To check which version is actually running, compare the two:
+
+```bash
+sudo -u ttpu git -C /opt/ttpu-dor log --oneline -1
+```
+
+If an update turns out to be bad, go back one commit and restart — the code on
+the server is a checkout like any other:
+
+```bash
+sudo -u ttpu git -C /opt/ttpu-dor reset --hard HEAD~1
 sudo systemctl restart ttpu-bot
 ```
 
