@@ -4,6 +4,12 @@ credentials.json
 *.pem
 *.key
 
+# Generated interview lists — applicants' names and phone numbers
+suhbat_*.docx
+
+# Generated channel-membership lists — applicants' names and phone numbers
+channel_*.csv
+
 # Local runtime data
 user_langs.json
 user_langs.json.bak
