@@ -220,9 +220,15 @@ def _write_sent_column_sync(sheets_service, stamps: list) -> None:
 # ---------------------------------------------------------------- delivery
 
 async def _render(
-    text_key: str, telegram_id: int, reason: str, updated: bool = False
+    text_key: str, telegram_id: int, reason: str, updated: bool = False,
+    lang: str | None = None,
 ) -> str:
     """Build one message in the applicant's own language.
+
+    `lang` overrides that choice, for the occasions when a whole group is written
+    to in one language regardless of what each of them picked — see
+    tools/resend_details.py. Left None, which is how the watcher calls it, the
+    applicant's own language is used.
 
     The template comes from texts.py; the reason is a tutor's free text, so it is
     machine-translated to match. The tutor's exact words follow underneath —
@@ -238,7 +244,7 @@ async def _render(
     """
     from texts import t
 
-    lang = get_user_lang(telegram_id)
+    lang = lang or get_user_lang(telegram_id)
     shown, translated = await translate_reason(reason, lang)
 
     block = html.escape(shown, quote=False)
