@@ -11,7 +11,7 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import BOT_TOKEN, RESULT_POLL_SECONDS, TASHKENT_TZ
-from handlers import start, menu, application, admin
+from handlers import start, menu, application, admin, documents
 from utils.google_api import sync_app_counter, sync_applied_users
 from utils.results import results_watcher
 from utils.translate import startup_summary
@@ -45,7 +45,11 @@ async def main() -> None:
     dp = Dispatcher(storage=MemoryStorage())
 
     # Register routers — order matters!
-    # application router first so cancel handler catches during form states
+    # documents first: its cancel is state-filtered and must win over the
+    # application router's global one, which would say the application itself
+    # had been cancelled.
+    dp.include_router(documents.router)
+    # application router next so cancel handler catches during form states
     dp.include_router(application.router)
     dp.include_router(admin.router)
     dp.include_router(start.router)

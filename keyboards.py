@@ -41,10 +41,25 @@ def main_menu_keyboard(lang: str, is_admin: bool = False) -> ReplyKeyboardMarkup
         #     KeyboardButton(text=t("btn_change_lang", lang)),
         #     KeyboardButton(text=t("btn_faq", lang)),
         # ],
+        # Shown to everyone rather than only to applicants: the keyboard is built
+        # in places that do not know whether this user has applied, and someone
+        # who has not is told so in words when they press it.
+        [KeyboardButton(text=t("btn_reupload_doc", lang))],
     ]
     if is_admin:
         keyboard.append([KeyboardButton(text=t("btn_publish_results", lang))])
     return ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True)
+
+
+def reupload_keyboard(lang: str) -> ReplyKeyboardMarkup:
+    """Send + Cancel while an applicant is attaching a corrected document."""
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=t("btn_reupload_send", lang))],
+            [KeyboardButton(text=t("btn_cancel", lang))],
+        ],
+        resize_keyboard=True,
+    )
 
 
 def publish_confirm_keyboard(lang: str) -> InlineKeyboardMarkup:

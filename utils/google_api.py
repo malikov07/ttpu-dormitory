@@ -263,6 +263,50 @@ async def sync_applied_users() -> int:
     return seed(ids)
 
 
+def _find_application_sync(sheets_service, user_id: int):
+    """Find one applicant's row by their Telegram id (column L)."""
+    response = sheets_service.spreadsheets().values().get(
+        spreadsheetId=SPREADSHEET_ID,
+        range="Sheet1!A1:N",
+    ).execute()
+
+    def cell(row, index):
+        if len(row) <= index:
+            return ""
+        value = row[index]
+        return value.strip() if isinstance(value, str) else str(value).strip()
+
+    for row in response.get("values", []):
+        try:
+            if int(float(cell(row, 11))) != user_id:
+                continue
+        except (ValueError, TypeError):
+            continue  # header row, or a row the bot did not write
+        return {
+            "app_id": cell(row, 0),
+            "name": cell(row, 1),
+            "reason": cell(row, 7),
+            "status": cell(row, 12),
+        }
+    return None
+
+
+async def find_application(user_id: int):
+    """The applicant's record, or None if the sheet has no row for them.
+
+    The spreadsheet is asked rather than the local applied-users file because
+    that file only carries an application id for people who applied after it
+    existed — every row seeded from the sheet has none, and a document arriving
+    in the channel without its application number is of no use to the tutors.
+    Raises on an unreachable sheet, so a lookup failure can be told apart from
+    an applicant who genuinely has no application.
+    """
+    sheets_service = get_services()
+    if not sheets_service:
+        raise RuntimeError("Could not obtain Google Services to look up an application.")
+    return await asyncio.to_thread(_find_application_sync, sheets_service, user_id)
+
+
 def _read_highest_app_id_sync(sheets_service) -> int:
     """Return the largest application id in column A, or 0 if there are none."""
     response = sheets_service.spreadsheets().values().get(

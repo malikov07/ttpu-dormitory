@@ -120,6 +120,56 @@ TEXTS = {
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🤝 E'tiboringiz uchun rahmat! Omad tilaymiz! 🍀"
         ),
+        # Document re-upload
+        "btn_reupload_doc": "📄 Hujjatni qayta yuklash",
+        "reupload_intro": (
+            "📄 <b>Rasmiy hujjatni qayta yuklash</b>\n\n"
+            "🆔 Ariza raqami: <b>#{id}</b>\n\n"
+            "⚠️ Hujjat <b>rasmiy manbadan</b> olingan boʻlishi shart — masalan "
+            "<b>my.gov.uz</b> (MyGov) portali yoki ilovasidan yuklab olingan, "
+            "QR-kodi va maʼlumotnoma raqami koʻrinib turgan hujjat.\n"
+            "❌ Qoʻlda yozilgan qogʻoz, yozishmalar skrinshoti yoki tasdiqlanmagan "
+            "nusxa qabul qilinmaydi.\n\n"
+            "📎 Hujjatni <b>fayl</b> (PDF, Word) koʻrinishida yuborish tavsiya etiladi — "
+            "rasm siqilganda QR-kod oʻqilmay qolishi mumkin.\n\n"
+            "Bir nechta fayl yuborishingiz mumkin. Tugatgach «{send}» tugmasini bosing."
+        ),
+        "reupload_added": "✅ {count}-fayl qabul qilindi.",
+        "reupload_invalid": (
+            "⚠️ Iltimos, rasm yoki hujjat fayli (PDF, Word) yuboring.\n"
+            "Tugatgach «{send}» tugmasini bosing."
+        ),
+        "reupload_empty": "⚠️ Avval hujjatni yuboring, soʻngra «{send}» tugmasini bosing.",
+        "reupload_limit": (
+            "⚠️ Bir marta yuborishda koʻpi bilan {max} ta fayl qabul qilinadi.\n"
+            "«{send}» tugmasini bosing — kerak boʻlsa, qolganini keyin yuborasiz."
+        ),
+        "reupload_sent": (
+            "✅ <b>Hujjatingiz yuborildi!</b>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🆔 Ariza raqami: <b>#{id}</b>\n"
+            "📎 Yuborilgan fayllar: <b>{count}</b> ta\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🕓 Ishchi guruh hujjatni koʻrib chiqadi. Natija shu bot orqali yuboriladi.\n"
+            "📄 Yana hujjat yuborish kerak boʻlsa, shu tugmani qayta bosing."
+        ),
+        "reupload_cancelled": (
+            "❌ Hujjat yuborish bekor qilindi. Arizangiz oʻzgarishsiz qoldi."
+        ),
+        "reupload_no_application": (
+            "⚠️ <b>Arizangiz topilmadi.</b>\n\n"
+            "Hujjatni qayta yuklash faqat ariza topshirganlar uchun. "
+            "Avval «{apply}» tugmasi orqali ariza topshiring."
+        ),
+        "reupload_unavailable": (
+            "⚠️ Hujjat qabul qilish hozircha ishlamayapti. "
+            "Iltimos, birozdan keyin qayta urinib koʻring."
+        ),
+        "reupload_error": (
+            "❌ Hujjatni yuborishda xatolik yuz berdi. "
+            "Iltimos, qaytadan urinib koʻring."
+        ),
+        "btn_reupload_send": "✅ Hujjatni yuborish",
         # Admin / results
         "btn_publish_results": "📣 Tayyor natijalarni yuborish",
         "publish_prompt": (
@@ -228,6 +278,21 @@ TEXTS = {
             "🔗 <b>User ID:</b> {user_id}\n"
             "━━━━━━━━━━━━━━━━━━━━"
         ),
+        # Documents channel. Deliberately Uzbek-only — the tutors read it and the
+        # sender passes "uz" explicitly, so there is no en/ru copy to drift.
+        "reupload_channel_caption": (
+            "📄 <b>QAYTA YUKLANGAN HUJJAT</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🆔 <b>Ariza:</b> #{id}\n"
+            "👤 <b>F.I.O.:</b> {name}\n"
+            "📝 <b>Sabab:</b> {reason}\n"
+            "📎 <b>Fayllar:</b> {count} ta\n"
+            "🆔 <b>Telegram:</b> @{username}\n"
+            "🔗 <b>User ID:</b> {user_id}\n"
+            "🕓 <b>Yuborildi:</b> {at}\n"
+            "━━━━━━━━━━━━━━━━━━━━"
+        ),
+        "reupload_channel_more": "📄 Ariza #{id} — hujjatning davomi",
         # Preview (same layout, user's language)
         "preview_caption": (
             "📋 <b>ARIZA KO'RINISHI</b>\n"
@@ -376,6 +441,55 @@ TEXTS = {
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🤝 Thank you! Good luck! 🍀"
         ),
+        # Document re-upload
+        "btn_reupload_doc": "📄 Re-upload document",
+        "reupload_intro": (
+            "📄 <b>Re-upload your official document</b>\n\n"
+            "🆔 Application number: <b>#{id}</b>\n\n"
+            "⚠️ The document must come from an <b>official source</b> — for example "
+            "one downloaded from the <b>my.gov.uz</b> (MyGov) portal or app, with its "
+            "QR code and reference number visible.\n"
+            "❌ Handwritten notes, screenshots of chats and uncertified copies are "
+            "not accepted.\n\n"
+            "📎 Please send it as a <b>file</b> (PDF, Word) — a compressed photo can "
+            "leave the QR code unreadable.\n\n"
+            "You may send several files. Press «{send}» when you are done."
+        ),
+        "reupload_added": "✅ File {count} received.",
+        "reupload_invalid": (
+            "⚠️ Please send a photo or a document file (PDF, Word).\n"
+            "Press «{send}» when you are done."
+        ),
+        "reupload_empty": "⚠️ Send the document first, then press «{send}».",
+        "reupload_limit": (
+            "⚠️ Up to {max} files can be sent at a time.\n"
+            "Press «{send}» — you can send the rest afterwards."
+        ),
+        "reupload_sent": (
+            "✅ <b>Your document has been sent!</b>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🆔 Application number: <b>#{id}</b>\n"
+            "📎 Files sent: <b>{count}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🕓 The working group will review it. The result will be sent through this bot.\n"
+            "📄 Need to send another document? Press the same button again."
+        ),
+        "reupload_cancelled": (
+            "❌ Sending cancelled. Your application is unchanged."
+        ),
+        "reupload_no_application": (
+            "⚠️ <b>No application found for you.</b>\n\n"
+            "Re-uploading a document is only for applicants. "
+            "Please submit an application first with «{apply}»."
+        ),
+        "reupload_unavailable": (
+            "⚠️ Document uploads are not working at the moment. "
+            "Please try again a little later."
+        ),
+        "reupload_error": (
+            "❌ Something went wrong while sending your document. Please try again."
+        ),
+        "btn_reupload_send": "✅ Send document",
         # Admin / results
         "btn_publish_results": "📣 Send finished results",
         "publish_prompt": (
@@ -623,6 +737,54 @@ TEXTS = {
             "━━━━━━━━━━━━━━━━━━━━\n\n"
             "🤝 Спасибо! Удачи! 🍀"
         ),
+        # Document re-upload
+        "btn_reupload_doc": "📄 Загрузить документ заново",
+        "reupload_intro": (
+            "📄 <b>Повторная загрузка официального документа</b>\n\n"
+            "🆔 Номер заявки: <b>#{id}</b>\n\n"
+            "⚠️ Документ должен быть получен из <b>официального источника</b> — "
+            "например, скачан с портала или из приложения <b>my.gov.uz</b> (MyGov), "
+            "с видимым QR-кодом и номером справки.\n"
+            "❌ Рукописные бумаги, скриншоты переписки и незаверенные копии не принимаются.\n\n"
+            "📎 Отправляйте документ <b>файлом</b> (PDF, Word) — на сжатом фото "
+            "QR-код может не читаться.\n\n"
+            "Можно отправить несколько файлов. Когда закончите, нажмите «{send}»."
+        ),
+        "reupload_added": "✅ Файл {count} принят.",
+        "reupload_invalid": (
+            "⚠️ Пожалуйста, отправьте фото или файл документа (PDF, Word).\n"
+            "Когда закончите, нажмите «{send}»."
+        ),
+        "reupload_empty": "⚠️ Сначала отправьте документ, затем нажмите «{send}».",
+        "reupload_limit": (
+            "⚠️ За один раз принимается не более {max} файлов.\n"
+            "Нажмите «{send}» — остальное можно отправить следом."
+        ),
+        "reupload_sent": (
+            "✅ <b>Ваш документ отправлен!</b>\n\n"
+            "━━━━━━━━━━━━━━━━━━━━\n"
+            "🆔 Номер заявки: <b>#{id}</b>\n"
+            "📎 Отправлено файлов: <b>{count}</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━\n\n"
+            "🕓 Рабочая группа рассмотрит документ. Результат придёт через этого бота.\n"
+            "📄 Нужно отправить ещё документ? Нажмите ту же кнопку снова."
+        ),
+        "reupload_cancelled": (
+            "❌ Отправка отменена. Ваша заявка осталась без изменений."
+        ),
+        "reupload_no_application": (
+            "⚠️ <b>Ваша заявка не найдена.</b>\n\n"
+            "Повторная загрузка документа доступна только заявителям. "
+            "Сначала подайте заявку кнопкой «{apply}»."
+        ),
+        "reupload_unavailable": (
+            "⚠️ Приём документов сейчас не работает. "
+            "Пожалуйста, попробуйте немного позже."
+        ),
+        "reupload_error": (
+            "❌ Произошла ошибка при отправке документа. Пожалуйста, попробуйте снова."
+        ),
+        "btn_reupload_send": "✅ Отправить документ",
         # Admin / results
         "btn_publish_results": "📣 Отправить готовые результаты",
         "publish_prompt": (

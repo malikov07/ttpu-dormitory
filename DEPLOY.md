@@ -26,12 +26,12 @@ scp .env credentials.json user@server:/tmp/
 ssh user@server 'sudo mv /tmp/.env /tmp/credentials.json /opt/ttpu-dor/'
 ```
 
-`.env` needs six variables: `BOT_TOKEN`, `CHANNEL_ID`, `SPREADSHEET_ID`,
-`DRIVE_FOLDER_ID`, `OFERTA_URL`, `ADMIN_IDS`. Four more are optional, all covered
-under "Announcing results" below: `RESULT_POLL_SECONDS` (default 120) and
-`RESULT_QUIET_SECONDS` (default 600) change result timings, while
-`GEMINI_API_KEY`, `GEMINI_MODEL` and `TRANSLATE_REASONS` control translating the
-reason into each applicant's language.
+`.env` needs seven variables: `BOT_TOKEN`, `CHANNEL_ID`, `SPREADSHEET_ID`,
+`DRIVE_FOLDER_ID`, `OFERTA_URL`, `ADMIN_IDS`, `DOCS_CHANNEL_ID` (see "Re-uploading
+a document" below). Four more are optional, all covered under "Announcing results":
+`RESULT_POLL_SECONDS` (default 120) and `RESULT_QUIET_SECONDS` (default 600) change
+result timings, while `GEMINI_API_KEY`, `GEMINI_MODEL` and `TRANSLATE_REASONS`
+control translating the reason into each applicant's language.
 
 ## 3. Run the setup script
 
@@ -158,6 +158,38 @@ With no key set — or if the key is rejected, the quota is spent, or the networ
 fails — the bot logs it once and sends every reason in the tutor's own language,
 exactly how it behaved before. Nothing breaks and no result is delayed. To turn
 the feature off deliberately, set `TRANSLATE_REASONS=0` in `.env`.
+
+## Re-uploading a document
+
+Applicants who attached the wrong official document get a **📄 Hujjatni qayta
+yuklash** button on the main menu. It does not re-open their application — the
+form stays closed — it only carries a corrected file to the tutors:
+
+1. The bot looks the applicant up in the sheet by their Telegram id (column L).
+   No row, no upload: a document without an application number is no use to
+   anyone, so the applicant is told to apply first instead.
+2. They attach one or more files (up to 10) and press **✅ Hujjatni yuborish**.
+3. The bot posts them to `DOCS_CHANNEL_ID` under a caption carrying the
+   application number, name, reason, Telegram handle and the time.
+
+The prompt tells applicants the document must come from an **official source —
+my.gov.uz (MyGov)** — with its QR code and reference number visible, and asks for
+a file rather than a photo, because compression can make a QR code unreadable.
+Nothing enforces this: whether a document is genuine is still a human judgement
+made in the channel.
+
+`DOCS_CHANNEL_ID` is a channel of its own, separate from `CHANNEL_ID` where new
+applications land — these need working through as a queue and would be buried in
+the application stream. Create the channel, **add the bot as an administrator with
+"Post messages"**, then get its numeric id by forwarding any post from it to
+[@userinfobot](https://t.me/userinfobot) and put it in `.env`:
+
+```bash
+DOCS_CHANNEL_ID=-1004419904930
+```
+
+Left unset (or `0`), the button answers "not working at the moment" and logs the
+reason — it never accepts a document it cannot deliver.
 
 ## Local state files
 

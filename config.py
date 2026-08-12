@@ -17,6 +17,13 @@ def now_tashkent() -> datetime:
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID", "0"))
+
+# Where corrected official documents land when an applicant re-uploads one. A
+# channel of its own, not the applications archive: tutors work through these as
+# a queue, and mixing them into the stream of new applications would bury them.
+# Left at 0 the re-upload button tells applicants the service is unavailable
+# rather than dropping their document silently.
+DOCS_CHANNEL_ID = int(os.getenv("DOCS_CHANNEL_ID", "0"))
 SPREADSHEET_ID = os.getenv("SPREADSHEET_ID", "")
 DRIVE_FOLDER_ID = os.getenv("DRIVE_FOLDER_ID", "")
 OFERTA_URL = os.getenv("OFERTA_URL", "")
